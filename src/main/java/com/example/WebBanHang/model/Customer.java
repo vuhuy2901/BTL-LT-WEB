@@ -7,6 +7,8 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -33,6 +35,7 @@ public class Customer {
     @Column(length = 20)
     private String phone;
     @Column(name = "password", nullable = false)
+    @JsonIgnore
     private String password;
     @Column(name = "date_of_birth")
     private LocalDate birthDate; 
