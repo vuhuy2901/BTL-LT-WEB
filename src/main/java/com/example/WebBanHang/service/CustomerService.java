@@ -67,5 +67,39 @@ public class CustomerService {
 
     } 
     
-    
+    public ResponseEntity<ApiResponse<Object>> logout(HttpSession session) {
+        try {
+            session.removeAttribute("customer");
+            return ResponseEntity.ok().body(new ApiResponse<>("SUCCESS", "Logout success", null));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(new ApiResponse<>("ERROR", "Logout failed", e.getMessage() ));
+        }
+    } 
+    public ResponseEntity <ApiResponse<Object>> getProfile(HttpSession session) {
+        try {
+            Customer customer = (Customer) session.getAttribute("customer");
+            if (customer != null) {
+                return ResponseEntity.ok().body(new ApiResponse<>("SUCCESS", "Get profile success", customer));
+            }
+            return ResponseEntity.badRequest().body(new ApiResponse<>("ERROR", "Customer not found", null));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(new ApiResponse<>("ERROR", "Get profile failed", e.getMessage() ));
+        }
+    }  
+    public ResponseEntity <ApiResponse<Object>> updateProfile(Customer customer , HttpSession session) {
+        try {
+            Customer findCustomer = (Customer) session.getAttribute("customer");
+            if (findCustomer != null) {
+                findCustomer.setName(customer.getName());
+                findCustomer.setPhone(customer.getPhone());
+                findCustomer.setBirthDate(customer.getBirthDate());
+                findCustomer.setGender(customer.getGender());
+                save(findCustomer);
+                return ResponseEntity.ok().body(new ApiResponse<>("SUCCESS", "Update profile success", findCustomer));
+            }
+            return ResponseEntity.badRequest().body(new ApiResponse<>("ERROR", "Customer not found", null));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(new ApiResponse<>("ERROR", "Update profile failed", e.getMessage() ));
+        }
+    }   
 }
