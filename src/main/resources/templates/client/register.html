@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Đăng ký</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'Inter', sans-serif;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+            padding: 30px 16px;
+        }
+        .card {
+            background: #fff;
+            border-radius: 16px;
+            padding: 40px 36px;
+            width: 100%;
+            max-width: 480px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.18);
+        }
+        .card h2 { font-size: 1.75rem; font-weight: 700; color: #1a1a2e; margin-bottom: 6px; }
+        .card .subtitle { font-size: 0.9rem; color: #6b7280; margin-bottom: 28px; }
+        .form-group { margin-bottom: 16px; }
+        .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+        label { display: block; font-size: 0.875rem; font-weight: 500; color: #374151; margin-bottom: 6px; }
+        input, select {
+            width: 100%; padding: 12px 14px;
+            border: 1.5px solid #e5e7eb; border-radius: 10px;
+            font-size: 0.95rem; color: #111827;
+            outline: none; background: #fff;
+            font-family: 'Inter', sans-serif;
+            transition: border-color 0.2s;
+        }
+        input:focus, select:focus { border-color: #11998e; }
+        .btn {
+            width: 100%; padding: 13px;
+            background: linear-gradient(135deg, #11998e, #38ef7d);
+            color: #fff; border: none; border-radius: 10px;
+            font-size: 1rem; font-weight: 600; cursor: pointer;
+            margin-top: 6px; transition: opacity 0.2s, transform 0.1s;
+        }
+        .btn:hover { opacity: 0.88; transform: translateY(-1px); }
+        .btn:disabled { opacity: 0.7; cursor: not-allowed; }
+        /* Toast Notification Styles */
+        .toast-container { position: fixed; top: 20px; right: 20px; z-index: 9999; display: flex; flex-direction: column; gap: 10px; }
+        .toast {
+            min-width: 280px; padding: 16px 20px; border-radius: 12px;
+            background: #fff; box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            display: flex; align-items: center; gap: 12px;
+            transform: translateX(120%); opacity: 0;
+            transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        }
+        .toast.show { transform: translateX(0); opacity: 1; }
+        .toast-icon { width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; flex-shrink: 0; }
+        .toast.error .toast-icon { background: #ef4444; }
+        .toast.success .toast-icon { background: #22c55e; }
+        .toast-msg { font-size: 0.95rem; font-weight: 500; color: #1f2937; }
+        .footer-text { text-align: center; margin-top: 20px; font-size: 0.875rem; color: #6b7280; }
+        .footer-text a { color: #11998e; font-weight: 500; text-decoration: none; }
+        .footer-text a:hover { text-decoration: underline; }
+    </style>
+</head>
+<body>
+    <!-- Toast Container -->
+    <div id="toastContainer" class="toast-container"></div>
+
+    <div class="card">
+        <h2>Tạo tài khoản</h2>
+        <p class="subtitle">Điền đầy đủ thông tin bên dưới để đăng ký</p>
+        <form id="registerForm">
+            <div class="form-group">
+                <label for="name">Họ và tên *</label>
+                <input type="text" id="name" required />
+            </div>
+            <div class="form-group">
+                <label for="email">Email *</label>
+                <input type="email" id="email" required />
+            </div>
+            <div class="form-group">
+                <label for="phone">Số điện thoại *</label>
+                <input type="tel" id="phone" required />
+            </div>
+            <div class="form-group">
+                <label for="password">Mật khẩu *</label>
+                <input type="password" id="password" required />
+            </div>
+            <div class="form-group">
+                <label for="confirmPassword">Xác nhận mật khẩu *</label>
+                <input type="password" id="confirmPassword" required />
+                <span id="pwMatchMsg" style="font-size:0.8rem; margin-top:4px; display:none;"></span>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="birthDate">Ngày sinh *</label>
+                    <input type="date" id="birthDate" required />
+                </div>
+                <div class="form-group">
+                    <label for="gender">Giới tính *</label>
+                    <select id="gender" required>
+                        <option value="Nam">Nam</option>
+                        <option value="Nữ">Nữ</option>
+                        <option value="Khác">Khác</option>
+                    </select>
+                </div>
+            </div>
+            <button type="submit" class="btn" id="submitBtn">Đăng ký</button>
+        </form>
+        <div class="footer-text">
+            Đã có tài khoản? <a href="/login">Đăng nhập</a>
+        </div>
+    </div>
+
+    <script>
+        const form = document.getElementById('registerForm');
+        const submitBtn = document.getElementById('submitBtn');
+
+        // Hàm hiện Toast
+        function showToast(msg, type) {
+            const container = document.getElementById('toastContainer');
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            const iconContent = type === 'success' ? '✓' : '✗';
+            
+            toast.innerHTML = `
+                <div class="toast-icon">${iconContent}</div>
+                <div class="toast-msg">${msg}</div>
+            `;
+            container.appendChild(toast);
+            requestAnimationFrame(() => toast.classList.add('show'));
+            setTimeout(() => {
+                toast.classList.remove('show');
+                setTimeout(() => toast.remove(), 400); 
+            }, 3500);
+        }
+
+        form.addEventListener('submit', async function (e) {
+            e.preventDefault();
+
+            // Kiểm tra mật khẩu khớp 
+            const password = document.getElementById('password').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+            if (password !== confirmPassword) {
+                showToast('Mật khẩu xác nhận không khớp!', 'error');
+                return;
+            }
+
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Đang xử lý...';
+
+            const payload = {
+                name: document.getElementById('name').value.trim(),
+                email: document.getElementById('email').value.trim(),
+                phone: document.getElementById('phone').value.trim(),
+                password: document.getElementById('password').value,
+                birthDate: document.getElementById('birthDate').value,
+                gender: document.getElementById('gender').value
+            };
+
+            try {
+                const res = await fetch('/register', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    credentials: 'include',
+                    body: JSON.stringify(payload)
+                });
+                const data = await res.json();
+                
+                if (data.status === 'SUCCESS') {
+                    showToast('Đăng ký thành công! Đang chuyển đến trang đăng nhập...', 'success');
+                    setTimeout(() => window.location.href = '/login', 2000);
+                } else {
+                    showToast(data.message || 'Lỗi không xác định từ server', 'error');
+                }
+            } catch (err) {
+                showToast('Không thể kết nối đến server!', 'error');
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Đăng ký';
+            }
+        });
+    </script>
+</body>
+</html>

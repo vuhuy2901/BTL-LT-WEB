@@ -11,22 +11,18 @@ import jakarta.servlet.http.HttpSession;
 
 import org.mindrot.jbcrypt.BCrypt;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.HttpClientErrorException.BadRequest;
+import org.springframework.web.client.HttpClientErrorException.BadRequest;   
 
 @Service
 public class CustomerService {
     @Autowired 
     public CustomerRepository customerRepository;
-    public Customer findByEmail(String email) {
-        return customerRepository.findByEmail(email);
-    }
-    public Customer save(Customer customer) {
-        return customerRepository.save(customer);
-    }
+    
 
     public ResponseEntity<ApiResponse<Object>>   login(String email, String password , HttpSession session) {
         try {
-            Customer customer = this.findByEmail(email);
+            
+            Customer customer =customerRepository.findByEmail(email);
         
         if (customer != null ) {
             if(BCrypt.checkpw(password, customer.getPassword())) {
@@ -39,29 +35,31 @@ public class CustomerService {
                 session.removeAttribute("customer"); 
             }
             session.setAttribute("customer", customer);
-            return  ResponseEntity.ok().body(new ApiResponse<>("SUCCESS", "Login success", customer));
+            return  ResponseEntity.ok().body(new ApiResponse<>("SUCCESS", "Đăng nhập thành công", customer));
         }
             return ResponseEntity.badRequest().body(new ApiResponse<>("ERROR", "Không tồn tại email ", null));
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body(new ApiResponse<>("ERROR", "Login failed", e.getMessage() ));
+            return ResponseEntity.badRequest().body(new ApiResponse<>("ERROR", "Đăng nhập thất bại", e.getMessage() ));
         }
     }
     public ResponseEntity<ApiResponse<Object>> register ( Customer customer ) {
         try {
-            Customer findCustomer  = findByEmail(customer.getEmail()) ;
+
+
+            Customer findCustomer  = customerRepository.findByEmail(customer.getEmail()) ;
         if(findCustomer != null) {
-            return ResponseEntity.badRequest().body(new ApiResponse<>("ERROR", "Email already exists", null)); 
+            return ResponseEntity.badRequest().body(new ApiResponse<>("ERROR", "Email đã tồn tại", null)); 
         }
         String pwhash = BCrypt.hashpw(customer.getPassword(), BCrypt.gensalt());
         customer.setPassword(pwhash);
         if (customer.getIsActive() == null) {
             customer.setIsActive(true);
         }
-        save(customer);
-        return  ResponseEntity.ok().body(new ApiResponse<>("SUCCESS", "Register success", customer));
+        customerRepository.save(customer);
+        return  ResponseEntity.ok().body(new ApiResponse<>("SUCCESS", "Đăng ký thành công", customer));
         } catch (Exception e) {
             System.out.println(e);
-            return ResponseEntity.badRequest().body(new ApiResponse<>("ERROR", "Register failed", e.getMessage() ));
+            return ResponseEntity.badRequest().body(new ApiResponse<>("ERROR", "Đăng ký thất bại", e.getMessage() ));
         }
         
 
@@ -70,20 +68,20 @@ public class CustomerService {
     public ResponseEntity<ApiResponse<Object>> logout(HttpSession session) {
         try {
             session.removeAttribute("customer");
-            return ResponseEntity.ok().body(new ApiResponse<>("SUCCESS", "Logout success", null));
+            return ResponseEntity.ok().body(new ApiResponse<>("SUCCESS", "Đăng xuất thành công", null));
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body(new ApiResponse<>("ERROR", "Logout failed", e.getMessage() ));
+            return ResponseEntity.badRequest().body(new ApiResponse<>("ERROR", "Đăng xuất thất bại", e.getMessage() ));
         }
     } 
     public ResponseEntity <ApiResponse<Object>> getProfile(HttpSession session) {
         try {
             Customer customer = (Customer) session.getAttribute("customer");
             if (customer != null) {
-                return ResponseEntity.ok().body(new ApiResponse<>("SUCCESS", "Get profile success", customer));
+                return ResponseEntity.ok().body(new ApiResponse<>("SUCCESS", "Lấy thông tin khách hàng thành công", customer));
             }
-            return ResponseEntity.badRequest().body(new ApiResponse<>("ERROR", "Customer not found", null));
+            return ResponseEntity.badRequest().body(new ApiResponse<>("ERROR", "Không tìm thấy khách hàng", null));
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body(new ApiResponse<>("ERROR", "Get profile failed", e.getMessage() ));
+            return ResponseEntity.badRequest().body(new ApiResponse<>("ERROR", "Lỗi khi lấy thông tin khách hàng", e.getMessage() ));
         }
     }  
     public ResponseEntity <ApiResponse<Object>> updateProfile(Customer customer , HttpSession session) {
@@ -94,12 +92,12 @@ public class CustomerService {
                 findCustomer.setPhone(customer.getPhone());
                 findCustomer.setBirthDate(customer.getBirthDate());
                 findCustomer.setGender(customer.getGender());
-                save(findCustomer);
-                return ResponseEntity.ok().body(new ApiResponse<>("SUCCESS", "Update profile success", findCustomer));
+                customerRepository.save(findCustomer);
+                return ResponseEntity.ok().body(new ApiResponse<>("SUCCESS", "Cập nhập thông tin khách hàng thành công", findCustomer));
             }
-            return ResponseEntity.badRequest().body(new ApiResponse<>("ERROR", "Customer not found", null));
+            return ResponseEntity.badRequest().body(new ApiResponse<>("ERROR", " Không tìm thấy Customer ", null));
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body(new ApiResponse<>("ERROR", "Update profile failed", e.getMessage() ));
+            return ResponseEntity.badRequest().body(new ApiResponse<>("ERROR", "Lỗi khi cập nhập thông tin khách hàng", e.getMessage() ));
         }
     }   
 }
