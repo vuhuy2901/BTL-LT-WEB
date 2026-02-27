@@ -1,4 +1,4 @@
-package com.example.WebBanHang.service.admin;
+package com.example.WebBanHang.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -26,4 +26,15 @@ public class BrandService {
         )   ; 
          
     }
+    public ResponseEntity<ApiResponse> listBrand() {
+        try {
+            return ResponseEntity.ok().body(
+                new ApiResponse<>("SUCCESS", "Lấy danh sách thương hiệu thành công", repo.findAll())
+            )   ; 
+        } catch (Exception e) {
+            return ResponseEntity.ok().body(
+                new ApiResponse<>("ERROR", "Lỗi Server" , null ) 
+             );
+        }
+    }  
 }

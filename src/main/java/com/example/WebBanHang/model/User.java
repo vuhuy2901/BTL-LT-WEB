@@ -16,36 +16,49 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
-@Table(name = "customers")
+@Table(name = "users")
 @Setter
 @Getter
-@NoArgsConstructor  // <--- Cần thiết cho JPA
-@AllArgsConstructor // <--- Tiện lợi khi new Customer()
+@NoArgsConstructor
+@AllArgsConstructor
 @EntityListeners(AuditingEntityListener.class)
-public class Customer {
+public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "customer_id")
+    @Column(name = "user_id")
     private Integer id;
-    @Column(name = "full_name", nullable = false)
-    private String name;
-    @Column(nullable = false, unique = true)
+
+    @Column(name = "username", unique = true)
+    private String username;
+
+    @Column(name = "email", unique = true)
     private String email;
-    @Column(length = 20)
-    private String phone;
+
     @Column(name = "password", nullable = false)
     @JsonIgnore
     private String password;
+
+    @Column(name = "full_name", nullable = false)
+    private String fullName;
+
+    @Column(name = "phone", length = 20)
+    private String phone;
+
     @Column(name = "date_of_birth")
-    private LocalDate birthDate; 
+    private LocalDate dateOfBirth;
+
     @Column(columnDefinition = "ENUM('Nam', 'Nữ', 'Khác')")
     private String gender;
-    @Column(name = "is_active",nullable = false)
+
+    @Column(name = "role", columnDefinition = "ENUM('ADMIN','CLIENT','STAFF') DEFAULT 'CLIENT'")
+    private String role = "CLIENT";
+
+    @Column(name = "is_active", nullable = false)
     private Boolean isActive = true;
 
     @CreatedDate
-    @Column(name = "created_at") 
+    @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;
 
     @LastModifiedDate

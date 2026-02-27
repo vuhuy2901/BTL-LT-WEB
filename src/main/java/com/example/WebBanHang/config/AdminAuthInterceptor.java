@@ -12,19 +12,18 @@ public class AdminAuthInterceptor implements HandlerInterceptor {
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
-        HttpSession session = request.getSession();
-        
-       ;    
-        if (session.getAttribute("admin") == null) {
-            
-            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            response.setContentType("application/json");
-            response.setCharacterEncoding("UTF-8");
-            response.getWriter().write("{\"status\": \"ERROR\", \"message\": \"Bạn chưa đăng nhập Admin hoặc phiên đăng nhập đã hết hạn!\", \"data\": null}");
-            
-            return false; // Chặn request không cho đi tiếp vào Controller
-        }
-        
-        return true; // Cho phép đi tiếp
+        // TODO: Bật lại trước khi deploy thực tế
+        // User currentUser = (User) request.getSession().getAttribute("currentUser");
+        // if (currentUser == null ||
+        //     (!"ADMIN".equals(currentUser.getRole()) && !"STAFF".equals(currentUser.getRole()))) {
+        //     response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+        //     response.setContentType("application/json");
+        //     response.setCharacterEncoding("UTF-8");
+        //     response.getWriter().write(
+        //         "{\"status\":\"ERROR\",\"message\":\"Bạn chưa đăng nhập hoặc không có quyền truy cập!\",\"data\":null}"
+        //     );
+        //     return false;
+        // }
+        return true; // Tạm tắt xác minh để dev
     }
 }

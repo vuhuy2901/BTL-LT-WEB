@@ -1,47 +1,37 @@
 package com.example.WebBanHang.dto;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedDate;
-
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
-import jakarta.persistence.Column;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
 import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
 public class UserRegistrationDto {
-     
-    @NotNull(message = "Name is required") 
-    private String name;
 
-    @NotNull(message = "Email is required")
-    @Email(message = "Email is invalid")
+    @NotBlank(message = "Họ tên không được để trống")
+    private String fullName;
+
+    @NotBlank(message = "Email không được để trống")
+    @Email(message = "Email không hợp lệ")
     private String email;
 
-    @NotNull(message = "Phone is required")
+    @NotBlank(message = "Số điện thoại không được để trống")
     private String phone;
-    
-    @NotNull(message = "Password is required")
+
+    @NotBlank(message = "Mật khẩu không được để trống")
     private String password;
-    @NotNull(message = "Birth date is required")
-    private LocalDate birthDate; 
-    @NotNull(message = "Gender is required")
+
+    @NotNull(message = "Ngày sinh không được để trống")
+    private LocalDate dateOfBirth;
+
+    @NotBlank(message = "Giới tính không được để trống")
     private String gender;
-    private Boolean isActive = true;
-    private LocalDateTime createdAt;
-    private LocalDateTime updatedAt;
 }

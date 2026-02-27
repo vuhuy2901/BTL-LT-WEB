@@ -1,0 +1,99 @@
+[INFO] Scanning for projects...
+[INFO] 
+[INFO] -----------------------< com.example:WebBanHang >-----------------------
+[INFO] Building WebBanHang 0.0.1-SNAPSHOT
+[INFO]   from pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] >>> spring-boot:4.0.2:run (default-cli) > test-compile @ WebBanHang >>>
+[INFO] 
+[INFO] --- resources:3.3.1:resources (default-resources) @ WebBanHang ---
+[INFO] Copying 1 resource from src\main\resources to target\classes
+[INFO] Copying 2 resources from src\main\resources to target\classes
+[INFO] 
+[INFO] --- compiler:3.14.1:compile (default-compile) @ WebBanHang ---
+[INFO] Nothing to compile - all classes are up to date.
+[INFO] 
+[INFO] --- resources:3.3.1:testResources (default-testResources) @ WebBanHang ---
+[INFO] skip non existing resourceDirectory C:\Users\TUAN\Downloads\WebBanHang\WebBanHang\src\test\resources
+[INFO] 
+[INFO] --- compiler:3.14.1:testCompile (default-testCompile) @ WebBanHang ---
+[INFO] Nothing to compile - all classes are up to date.
+[INFO] 
+[INFO] <<< spring-boot:4.0.2:run (default-cli) < test-compile @ WebBanHang <<<
+[INFO] 
+[INFO] 
+[INFO] --- spring-boot:4.0.2:run (default-cli) @ WebBanHang ---
+[INFO] Attaching agents: []
+
+  .   ____          _            __ _ _
+ /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
+( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
+ \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
+  '  |____| .__|_| |_|_| |_\__, | / / / /
+ =========|_|==============|___/=/_/_/_/
+
+ :: Spring Boot ::                (v4.0.2)
+
+2026-02-25T17:26:24.352+07:00  INFO 10080 --- [WebBanHang] [  restartedMain] c.e.WebBanHang.WebBanHangApplication     : Starting WebBanHangApplication using Java 22 with PID 10080 (C:\Users\TUAN\Downloads\WebBanHang\WebBanHang\target\classes started by TUAN in C:\Users\TUAN\Downloads\WebBanHang\WebBanHang)
+2026-02-25T17:26:24.355+07:00  INFO 10080 --- [WebBanHang] [  restartedMain] c.e.WebBanHang.WebBanHangApplication     : No active profile set, falling back to 1 default profile: "default"
+2026-02-25T17:26:24.408+07:00  INFO 10080 --- [WebBanHang] [  restartedMain] .e.DevToolsPropertyDefaultsPostProcessor : Devtools property defaults active! Set 'spring.devtools.add-properties' to 'false' to disable
+2026-02-25T17:26:24.408+07:00  INFO 10080 --- [WebBanHang] [  restartedMain] .e.DevToolsPropertyDefaultsPostProcessor : For additional web related logging consider setting the 'logging.level.web' property to 'DEBUG'
+2026-02-25T17:26:25.072+07:00  INFO 10080 --- [WebBanHang] [  restartedMain] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2026-02-25T17:26:25.129+07:00  INFO 10080 --- [WebBanHang] [  restartedMain] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 51 ms. Found 4 JPA repository interfaces.
+2026-02-25T17:26:25.801+07:00  INFO 10080 --- [WebBanHang] [  restartedMain] o.s.boot.tomcat.TomcatWebServer          : Tomcat initialized with port 8080 (http)
+2026-02-25T17:26:25.817+07:00  INFO 10080 --- [WebBanHang] [  restartedMain] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2026-02-25T17:26:25.818+07:00  INFO 10080 --- [WebBanHang] [  restartedMain] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/11.0.15]
+2026-02-25T17:26:25.879+07:00  INFO 10080 --- [WebBanHang] [  restartedMain] b.w.c.s.WebApplicationContextInitializer : Root WebApplicationContext: initialization completed in 1469 ms
+2026-02-25T17:26:26.069+07:00  INFO 10080 --- [WebBanHang] [  restartedMain] org.hibernate.orm.jpa                    : HHH008540: Processing PersistenceUnitInfo [name: default]
+2026-02-25T17:26:26.157+07:00  INFO 10080 --- [WebBanHang] [  restartedMain] org.hibernate.orm.core                   : HHH000001: Hibernate ORM core version 7.2.1.Final
+2026-02-25T17:26:26.737+07:00  INFO 10080 --- [WebBanHang] [  restartedMain] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2026-02-25T17:26:26.778+07:00  INFO 10080 --- [WebBanHang] [  restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
+2026-02-25T17:26:27.277+07:00  INFO 10080 --- [WebBanHang] [  restartedMain] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Added connection com.mysql.cj.jdbc.ConnectionImpl@70709156
+2026-02-25T17:26:27.280+07:00  INFO 10080 --- [WebBanHang] [  restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
+2026-02-25T17:26:27.400+07:00  INFO 10080 --- [WebBanHang] [  restartedMain] org.hibernate.orm.connections.pooling    : HHH10001005: Database info:
+	Database JDBC URL [jdbc:mysql://localhost:3306/sports_shop]
+	Database driver: MySQL Connector/J
+	Database dialect: MySQLDialect
+	Database version: 8.0.44
+	Default catalog/schema: sports_shop/undefined
+	Autocommit mode: undefined/unknown
+	Isolation level: REPEATABLE_READ [default REPEATABLE_READ]
+	JDBC fetch size: none
+	Pool: DataSourceConnectionProvider
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2026-02-25T17:26:28.453+07:00  INFO 10080 --- [WebBanHang] [  restartedMain] org.hibernate.orm.core                   : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+Hibernate: 
+    alter table customers 
+       modify column gender ENUM('Nam', 'Nữ', 'Khác')
+2026-02-25T17:26:28.562+07:00  INFO 10080 --- [WebBanHang] [  restartedMain] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2026-02-25T17:26:28.655+07:00  INFO 10080 --- [WebBanHang] [  restartedMain] o.s.d.j.r.query.QueryEnhancerFactories   : Hibernate is in classpath; If applicable, HQL parser will be used.
+2026-02-25T17:26:28.927+07:00  WARN 10080 --- [WebBanHang] [  restartedMain] JpaBaseConfiguration$JpaWebConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2026-02-25T17:26:29.305+07:00  WARN 10080 --- [WebBanHang] [  restartedMain] ConfigServletWebServerApplicationContext : Exception encountered during context initialization - cancelling refresh attempt: org.springframework.context.ApplicationContextException: Failed to start bean 'webServerStartStop'
+2026-02-25T17:26:29.307+07:00  INFO 10080 --- [WebBanHang] [  restartedMain] j.LocalContainerEntityManagerFactoryBean : Closing JPA EntityManagerFactory for persistence unit 'default'
+2026-02-25T17:26:29.311+07:00  INFO 10080 --- [WebBanHang] [  restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown initiated...
+2026-02-25T17:26:29.318+07:00  INFO 10080 --- [WebBanHang] [  restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown completed.
+2026-02-25T17:26:29.327+07:00  INFO 10080 --- [WebBanHang] [  restartedMain] .s.b.a.l.ConditionEvaluationReportLogger : 
+
+Error starting ApplicationContext. To display the condition evaluation report re-run your application with 'debug' enabled.
+2026-02-25T17:26:29.347+07:00 ERROR 10080 --- [WebBanHang] [  restartedMain] o.s.b.d.LoggingFailureAnalysisReporter   : 
+
+***************************
+APPLICATION FAILED TO START
+***************************
+
+Description:
+
+Web server failed to start. Port 8080 was already in use.
+
+Action:
+
+Identify and stop the process that's listening on port 8080 or configure this application to listen on another port.
+
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD SUCCESS
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time:  7.745 s
+[INFO] Finished at: 2026-02-25T17:26:29+07:00
+[INFO] ------------------------------------------------------------------------

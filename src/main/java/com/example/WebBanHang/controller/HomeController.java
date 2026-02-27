@@ -1,6 +1,5 @@
-package com.example.WebBanHang.controller.client;
+package com.example.WebBanHang.controller;
 
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -13,14 +12,6 @@ public class HomeController {
     public String home(HttpSession session) {
         if (session.getAttribute("customer") != null) {
             return "client/index"; // templates/client/index.html
-        }
-        return "redirect:/login";
-    }
-
-    @RequestMapping("/error")
-    public String handleError(HttpServletRequest request, HttpSession session) {
-        if (session.getAttribute("customer") != null) {
-            return "redirect:/";
         }
         return "redirect:/login";
     }

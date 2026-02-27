@@ -1,7 +1,6 @@
 package com.example.WebBanHang.dto;
 
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -12,10 +11,13 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 public class LoginDto {
-    @NotNull(message = "Email is required")
-    @Email(message = "Email is invalid")
-    private String email;
-    @NotNull(message = "Password is required")
+
+    /**
+     * Có thể là email (dành cho CLIENT) hoặc username (dành cho ADMIN/STAFF)
+     */
+    @NotBlank(message = "Tài khoản không được để trống")
+    private String identifier;
+
+    @NotBlank(message = "Mật khẩu không được để trống")
     private String password;
 }
- 

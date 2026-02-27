@@ -1,5 +1,8 @@
 package com.example.WebBanHang.model;
 
+import java.sql.Date;
+import java.time.LocalDateTime;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -12,23 +15,21 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
-@Table(name = "admins")
+@Table(name = "sports")
 @Setter
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class Admin {
+public class Sport {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "admin_id")
-    private Integer id;
-    @Column(name = "full_name")
-    private String fullName ; 
-    @Column(name = "username")
-    private String username ;
-    @Column(name = "password")
-    private String password ;
-    @Column(name = "role") 
-    private String role ; 
+    @Column(name = "sport_id") 
+    @GeneratedValue(strategy =  GenerationType.IDENTITY)
+    private Integer id ;
+    @Column(name = "sport_name") 
+    private String name ; 
+    @Column (name = "description")
+    private String description ; 
+    private LocalDateTime  createAt ; 
 
-}
+     
+} 
