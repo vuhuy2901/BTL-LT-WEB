@@ -14,7 +14,7 @@ import com.example.WebBanHang.model.Brand;
 import com.example.WebBanHang.service.BrandService;
 
 @Controller
-@RequestMapping("admin/brand")
+@RequestMapping("brand")
 public class BrandController {
 
     @Autowired

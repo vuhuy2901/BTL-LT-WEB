@@ -14,7 +14,7 @@ import com.example.WebBanHang.model.Sport;
 import com.example.WebBanHang.service.SportService;
 
 @Controller
-@RequestMapping("admin/sport")
+@RequestMapping("sport")
 public class SportController {
 
     @Autowired

@@ -1,0 +1,169 @@
+### =============================================
+### WebBanHang API Test File
+### Dùng với VS Code extension: REST Client
+### =============================================
+
+@host = http://localhost:8080
+
+### =========== AUTH ===========
+
+### Đăng nhập
+POST {{host}}/api/login
+Content-Type: application/json
+
+{
+  "identifier": "admin@gmail.com",
+  "password": "123456"
+}
+
+### =========== CATEGORY ===========
+
+### Lấy danh sách danh mục
+GET {{host}}/category
+
+### Thêm danh mục
+POST {{host}}/category/add
+Content-Type: application/json
+
+{
+  "name": "Giày thể thao"
+}
+
+### =========== BRAND ===========
+
+### Lấy danh sách thương hiệu
+GET {{host}}/brand/list
+
+### Thêm thương hiệu
+POST {{host}}/brand/add
+Content-Type: application/json
+
+{
+  "name": "Nike"
+}
+
+### =========== COLOR ===========
+
+### Lấy danh sách màu
+GET {{host}}/color/list
+
+### Thêm màu
+POST {{host}}/color/add
+Content-Type: application/json
+
+{
+  "name": "Đỏ",
+  "code": "#FF0000"
+}
+
+### Cập nhật màu
+PUT {{host}}/color/update/1
+Content-Type: application/json
+
+{
+  "name": "Đỏ tươi",
+  "code": "#FF1111"
+}
+
+### Xóa màu
+DELETE {{host}}/color/delete/1
+
+### =========== SIZE ===========
+
+### Lấy danh sách size (đã sort theo order)
+GET {{host}}/size/list
+
+### Thêm size - không cần truyền order, tự gán cuối danh sách
+POST {{host}}/size/add
+Content-Type: application/json
+
+{ "name": "XS" }
+
+###
+POST {{host}}/size/add
+Content-Type: application/json
+
+{ "name": "S" }
+
+###
+POST {{host}}/size/add
+Content-Type: application/json
+
+{ "name": "M" }
+
+###
+POST {{host}}/size/add
+Content-Type: application/json
+
+{ "name": "L" }
+
+###
+POST {{host}}/size/add
+Content-Type: application/json
+
+{ "name": "XL" }
+
+### Chèn size vào vị trí cụ thể (tự động shift các size phía sau)
+POST {{host}}/size/add
+Content-Type: application/json
+
+{ "name": "XXL", "order": 6 }
+
+### Reorder: đặt lại thứ tự bằng danh sách id [XS, S, M, L, XL, XXL]
+### Thay bằng đúng id hiện có trong DB của bạn
+PUT {{host}}/size/reorder
+Content-Type: application/json
+
+[1, 2, 3, 4, 5, 6]
+
+### Xóa size
+DELETE {{host}}/size/delete/1
+
+### =========== PRODUCT ===========
+
+### Lấy danh sách sản phẩm (full)
+GET {{host}}/product/list
+
+### Lấy card sản phẩm trang chủ (rút gọn)
+GET {{host}}/product/summary
+
+### Chi tiết 1 sản phẩm
+GET {{host}}/product/1
+
+### Tìm kiếm sản phẩm
+GET {{host}}/product/search?keyword=nike
+
+### Lọc theo danh mục
+GET {{host}}/product/category/1
+
+### Lọc theo thương hiệu
+GET {{host}}/product/brand/1
+
+### Thêm sản phẩm
+POST {{host}}/product/add
+Content-Type: application/json
+
+{
+  "name": "Giày Nike Air Max 2024",
+  "categoryId": 1,
+  "brandId": 1,
+  "sportId": 1,
+  "gender": "Nam",
+  "basePrice": 3000000,
+  "salePrice": 2500000,
+  "description": "Giày chạy bộ cao cấp",
+  "thumbnailUrl": "https://example.com/nike-air-max.jpg",
+  "isActive": true
+}
+
+### Cập nhật sản phẩm
+PUT {{host}}/product/update/1
+Content-Type: application/json
+
+{
+  "salePrice": 2200000,
+  "isActive": true
+}
+
+### Xóa sản phẩm
+DELETE {{host}}/product/delete/1

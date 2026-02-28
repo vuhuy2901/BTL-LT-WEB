@@ -19,13 +19,7 @@ public class UserService {
 
     // ===================== UNIFIED LOGIN =====================
 
-    /**
-     * Đăng nhập chung cho tất cả role.
-     * - identifier có thể là email HOẶC username
-     * - ADMIN/STAFF: password lưu dạng plain text (chưa hash)
-     * - CLIENT: password lưu dạng BCrypt hash
-     * Sau khi đăng nhập thành công, lưu user vào session["currentUser"]
-     */
+    
     public ResponseEntity<ApiResponse<Object>> login(String identifier, String password, HttpSession session) {
         try {
             // Tìm user theo email trước, nếu không có thì tìm theo username
