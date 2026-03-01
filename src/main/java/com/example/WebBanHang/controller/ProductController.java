@@ -30,17 +30,7 @@ public class ProductController {
         return productService.listProduct();
     }
 
-    // GET /product/summary → card nhỏ trang chủ (chỉ các field cần thiết)
-    @GetMapping("summary")
-    public ResponseEntity<ApiResponse> listSummary() {
-        return productService.listSummary();
-    }
-
-    @GetMapping("{id}")
-    public ResponseEntity<ApiResponse<Product>> getProduct(@PathVariable Integer id) {
-        return productService.getProduct(id);
-    }
-    @GetMapping("search")
+    // Deleted to avoid collision with HomeController's /product/{id}
     public ResponseEntity<ApiResponse> searchProduct(@RequestParam String keyword) {
         return productService.searchProduct(keyword);
     }

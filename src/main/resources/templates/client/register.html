@@ -154,13 +154,14 @@
             submitBtn.textContent = 'Đang xử lý...';
 
             const payload = {
-                name: document.getElementById('name').value.trim(),
+                fullName: document.getElementById('name').value.trim(),
                 email: document.getElementById('email').value.trim(),
                 phone: document.getElementById('phone').value.trim(),
                 password: document.getElementById('password').value,
-                birthDate: document.getElementById('birthDate').value,
+                dateOfBirth: document.getElementById('birthDate').value,
                 gender: document.getElementById('gender').value
             };
+            console.log(payload);
 
             try {
                 const res = await fetch('/register', {

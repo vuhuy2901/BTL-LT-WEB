@@ -4,6 +4,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
@@ -19,6 +21,10 @@ public class ProductService {
     @Autowired
     private ProductRepository repo;
 
+    public Page<Product> getPaginatedProducts(Pageable pageable) {
+        return repo.findByIsActiveTrue(pageable);
+    }
+
 
     public ResponseEntity<ApiResponse> listProduct() {
         try {
@@ -33,29 +39,7 @@ public class ProductService {
     }
 
    
-    public ResponseEntity<ApiResponse> listSummary() {
-        try {
-            List<ProductSummaryDto> summaries = repo.findByIsActiveTrue()
-                .stream()
-                .map(p -> new ProductSummaryDto(
-                    p.getId(),
-                    p.getName(),
-                    p.getThumbnailUrl(),
-                    p.getBasePrice(),
-                    p.getSalePrice(),
-                    p.getGender() != null ? p.getGender().name() : null
-                   
-                ))
-                .collect(Collectors.toList());
-            return ResponseEntity.ok().body(
-                new ApiResponse<>("SUCCESS", "Lấy danh sách sản phẩm thành công", summaries)
-            );
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body(
-                new ApiResponse<>("ERROR", "Lỗi Server", null)
-            );
-        }
-    }
+    
 
     public ResponseEntity<ApiResponse> searchProduct(String keyword) {
         try {
@@ -70,19 +54,13 @@ public class ProductService {
     }
 
     // Lấy chi tiết 1 sản phẩm theo id
-    public ResponseEntity<ApiResponse<Product>> getProduct(Integer id) {
+    public Product getProduct(Integer id) {
         try {
             return repo.findById(id)
-                .map(p -> ResponseEntity.ok().body(
-                    new ApiResponse<>("SUCCESS", "Lấy sản phẩm thành công", p)
-                ))
-                .orElse(ResponseEntity.badRequest().body(
-                    new ApiResponse<>("ERROR", "Sản phẩm không tồn tại", null)
-                ));
+                .map(p -> p)
+                .orElse(null);
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body(
-                new ApiResponse<>("ERROR", "Lỗi Server", null)
-            );
+            return null  ;
         }
     }
 

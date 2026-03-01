@@ -17,12 +17,12 @@ public class UserService {
     @Autowired
     private UserRepository userRepository;
 
-    // ===================== UNIFIED LOGIN =====================
+    
 
     
     public ResponseEntity<ApiResponse<Object>> login(String identifier, String password, HttpSession session) {
         try {
-            // Tìm user theo email trước, nếu không có thì tìm theo username
+            
             User user = userRepository.findByEmail(identifier);
             if (user == null) {
                 user = userRepository.findByUsername(identifier);

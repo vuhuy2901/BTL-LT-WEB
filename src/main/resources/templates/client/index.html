@@ -1,0 +1,422 @@
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SportZone - Premium Sports Equipment</title>
+    <link rel="stylesheet" href="/css/client/index.css">
+  </head>
+  <body>
+    <!-- Header -->
+    <header>
+      <div class="container">
+        <a href="#" class="logo">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polyline>
+          </svg>
+          <span>SportZone</span>
+        </a>
+
+        <nav>
+          <a href="#products">Tất cả sản phẩm</a>
+          
+          <!-- Dropdown Danh mục -->
+          <div class="nav-dropdown-wrapper">
+            <a href="#" style="display: flex; align-items: center; gap: 0.25rem;">
+              Danh mục
+              <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none" class="css-i6dzq1"><polyline points="6 9 12 15 18 9"></polyline></svg>
+            </a>
+            <div class="nav-dropdown">
+              <div th:if="${#lists.isEmpty(categories)}" style="padding: 0.5rem 1.5rem; color: #6b7280; font-size: 0.875rem;">Không có dữ liệu</div>
+              <a th:each="c : ${categories}" th:href="@{/category/{id}(id=${c.id})}" th:text="${c.name}">Danh mục 1</a>
+            </div>
+          </div>
+
+          <div class="nav-dropdown-wrapper">
+            <a href="#" style="display: flex; align-items: center; gap: 0.25rem;">
+              Môn thể thao
+              <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none" class="css-i6dzq1"><polyline points="6 9 12 15 18 9"></polyline></svg>
+            </a>
+            <div class="nav-dropdown">
+              <div th:if="${#lists.isEmpty(sports)}" style="padding: 0.5rem 1.5rem; color: #6b7280; font-size: 0.875rem;">Không có dữ liệu</div>
+              <a th:each="s : ${sports}" th:href="@{/sport/{id}(id=${s.id})}" th:text="${s.name}">Thể thao 1</a>
+            </div>
+          </div>
+
+          <!-- Dropdown Thương hiệu -->
+          <div class="nav-dropdown-wrapper">
+            <a href="#" style="display: flex; align-items: center; gap: 0.25rem;">
+              Thương hiệu
+              <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none" class="css-i6dzq1"><polyline points="6 9 12 15 18 9"></polyline></svg>
+            </a>
+            <div class="nav-dropdown">
+              <div th:if="${#lists.isEmpty(brands)}" style="padding: 0.5rem 1.5rem; color: #6b7280; font-size: 0.875rem;">Không có dữ liệu</div>
+              <a th:each="b : ${brands}" th:href="@{/brand/{id}(id=${b.id})}" th:text="${b.name}">Thương hiệu 1</a>
+            </div>
+          </div>
+
+        </nav>
+
+        <div class="header-actions">
+          <div class="search-container">
+            <input type="text" class="search-input" placeholder="Tìm kiếm sản phẩm...">
+            <button class="icon-btn" title="Search">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="11" cy="11" r="8"></circle>
+                <path d="m21 21-4.35-4.35"></path>
+              </svg>
+            </button>
+          </div>
+          <button class="icon-btn" title="Wishlist">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+            </svg>
+          </button>
+          <div class="account-wrapper">
+            <button class="icon-btn" id="account-btn" title="Account" th:data-logged-in="${session.currentUser != null}">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                <circle cx="12" cy="7" r="4"></circle>
+              </svg>
+            </button>
+            <div id="account-dropdown" class="account-dropdown" th:if="${session.currentUser != null}">
+              <div class="dropdown-header">
+                <strong>Tài khoản</strong>
+                <div style="font-size: 0.85rem; color: #6b7280; margin-top: 0.25rem;" th:text="${session.currentUser.fullName}">Tên người dùng</div>
+              </div>
+              <a href="/profile">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                  <circle cx="12" cy="7" r="4"></circle>
+                </svg>
+                Hồ sơ
+              </a>
+              <a href="/orders">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-shopping-bag-icon lucide-shopping-bag"><path d="M16 10a4 4 0 0 1-8 0"/><path d="M3.103 6.034h17.794"/><path d="M3.4 5.467a2 2 0 0 0-.4 1.2V20a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6.667a2 2 0 0 0-.4-1.2l-2-2.667A2 2 0 0 0 17 2H7a2 2 0 0 0-1.6.8z"/></svg>
+                Đơn hàng
+              </a>
+              <a href="#" id="logout-btn">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                  <polyline points="16 17 21 12 16 7"></polyline>
+                  <line x1="21" y1="12" x2="9" y2="12"></line>
+                </svg>
+                Đăng xuất
+              </a>
+            </div>
+          </div>
+          <button class="icon-btn" id="cart-btn" title="Shopping Cart">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="9" cy="21" r="1"></circle>
+              <circle cx="20" cy="21" r="1"></circle>
+              <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+            </svg>
+            <span class="cart-badge" id="cart-count" style="display: none;">0</span>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+      <div class="container">
+        <div class="hero-content">
+          <h2>Elevate Your<br><span>Athletic Performance</span></h2>
+          <p>Premium sports equipment and apparel for champions. Quality gear that moves with you.</p>
+          <div class="btn-group">
+            <button class="btn btn-primary">Shop Now</button>
+            <button class="btn btn-secondary">Learn More</button>
+          </div>
+        </div>
+        <div class="hero-image">
+          <img src="https://images.pexels.com/photos/2294361/pexels-photo-2294361.jpeg?auto=compress&cs=tinysrgb&w=1200" alt="Sports Equipment">
+        </div>
+      </div>
+    </section>
+
+    <!-- Features Section -->
+    
+
+    <section class="products" id="products">
+      <div class="container">
+        <div class="products-header">
+          <h2>Sản phẩm nổi bật</h2>
+        </div>
+        
+        <!-- Render Products List -->
+        <div class="products-grid">
+          <div class="product-card" th:each="product : ${products}">
+            <div class="product-image-wrapper">
+              <img th:src="${product.thumbnailUrl != null ? product.thumbnailUrl : 'https://images.pexels.com/photos/2529148/pexels-photo-2529148.jpeg?auto=compress&cs=tinysrgb&w=800'}" th:alt="${product.name}" class="product-image">
+              <span class = "product-badge"
+              th:if = "${product.salePrice != null}"
+              th:text="${'-' + #numbers.formatDecimal((product.basePrice - product.salePrice) * 100.0 / product.basePrice, 1, 0) + '%'}">
+              </span>
+              <button class="product-wishlist" 
+              th:classappend="${wishListProductIds != null and #lists.contains(wishListProductIds, product.id)} ? 'active' : ''"
+              th:onclick="'event.stopPropagation(); addToWishlist(' + ${product.id} + ' , this )'"
+              title="Add to wishlist">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                     th:style="${wishListProductIds != null and #lists.contains(wishListProductIds, product.id)} ? 'fill: #e74c3c; stroke: #e74c3c;' : ''">
+                  <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+                </svg>
+              </button>
+            </div>
+            <div 
+            th:onclick="|window.location.href='@{/product/{id}(id=${product.id})}'|" style="cursor: pointer;"
+            class="product-info">
+              <p class="product-category" th:text="${product.gender != null ? product.gender : 'Unisex'}">Danh mục</p>
+              <h3 class="product-name" th:text="${product.name}">Tên sản phẩm</h3>
+              
+              <div class="sale-countdown-wrapper" th:if="${product.saleEnd != null and product.salePrice != null}">
+              </div>
+              <div class="product-footer">
+                  <span class="product-price" th:text="${product.salePrice != null ? #numbers.formatDecimal(product.salePrice, 0, 'COMMA', 0, 'POINT') + 'đ' : #numbers.formatDecimal(product.basePrice, 0, 'COMMA', 0, 'POINT') + 'đ'}">0đ</span>
+      
+                <span class="original-price" 
+                      th:if="${product.salePrice != null}" 
+                      th:text="${#numbers.formatDecimal(product.basePrice, 0, 'COMMA', 0, 'POINT') + 'đ'}">
+                  0đ
+                </span>
+                <button class="product-btn" th:onclick="|event.stopPropagation(); addToCart(${product.id})|">Add to Cart</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Pagination Controls -->
+        <div th:if="${totalPages > 1}" class="pagination-container" style="margin-top: 3rem; display: flex; justify-content: center; gap: 0.5rem;">
+          <!-- Nút Previous -->
+          <a th:if="${currentPage > 0}" th:href="@{/(page=${currentPage - 1})}" class="btn btn-secondary" style="padding: 0.5rem 1rem;">Trang trước</a>
+          <span th:if="${currentPage == 0}" class="btn btn-secondary" style="padding: 0.5rem 1rem; opacity: 0.5; cursor: not-allowed;">Trang trước</span>
+          
+          <!-- Các trang -->
+          <span style="display: flex; align-items: center; padding: 0 1rem; font-weight: bold; color: var(--gray-700);">
+            Trang <span th:text="${currentPage + 1}" style="margin: 0 0.25rem; color: var(--primary-blue);">1</span> / <span th:text="${totalPages}" style="margin: 0 0.25rem;">1</span>
+          </span>
+          
+          <!-- Nút Next -->
+          <a th:if="${currentPage < totalPages - 1}" th:href="@{/(page=${currentPage + 1})}" class="btn btn-secondary" style="padding: 0.5rem 1rem;">Trang tiếp</a>
+          <span th:if="${currentPage >= totalPages - 1}" class="btn btn-secondary" style="padding: 0.5rem 1rem; opacity: 0.5; cursor: not-allowed;">Trang tiếp</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Newsletter Section -->
+    <section class="newsletter">
+      <div class="container">
+        <h2>Join Our Community</h2>
+        <p>Subscribe for exclusive offers and fitness tips</p>
+        <form class="newsletter-form" onsubmit="return false;">
+          <input type="email" class="newsletter-input" placeholder="Enter your email" required>
+          <button type="submit" class="newsletter-btn">Subscribe</button>
+        </form>
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+      <div class="container">
+        <div class="footer-grid">
+          <div class="footer-section">
+            <div class="footer-logo">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polyline>
+              </svg>
+              <span>SportZone</span>
+            </div>
+            <p class="footer-text">Your trusted partner in athletic excellence.</p>
+          </div>
+
+          <div class="footer-section">
+            <h4>Shop</h4>
+            <ul class="footer-links">
+              <li><a href="#">New Arrivals</a></li>
+              <li><a href="#">Best Sellers</a></li>
+              <li><a href="#">Sale</a></li>
+            </ul>
+          </div>
+
+          <div class="footer-section">
+            <h4>Support</h4>
+            <ul class="footer-links">
+              <li><a href="#">Contact Us</a></li>
+              <li><a href="#">Shipping Info</a></li>
+              <li><a href="#">Returns</a></li>
+            </ul>
+          </div>
+
+          <div class="footer-section">
+            <h4>Follow Us</h4>
+            <div class="footer-socials">
+              <a href="#">Facebook</a>
+              <a href="#">Instagram</a>
+              <a href="#">Twitter</a>
+            </div>
+          </div>
+        </div>
+
+        <div class="footer-bottom">
+          <p>&copy; 2024 SportZone. All rights reserved.</p>
+        </div>
+      </div>
+    </footer>
+
+    <script>
+      let cartCount = 0;
+
+      function addToCart(productId) {
+        cartCount++;
+        updateCartBadge();
+
+        const btn = event.target;
+        if (btn) {
+          btn.textContent = 'Added!';
+          btn.style.opacity = '0.7';
+          setTimeout(() => {
+            btn.textContent = 'Add to Cart';
+            btn.style.opacity = '1';
+          }, 1500);
+        }
+      }
+
+      function updateCartBadge() {
+        const badge = document.getElementById('cart-count');
+        badge.textContent = cartCount;
+        badge.style.display = cartCount > 0 ? 'flex' : 'none';
+      }
+
+      document.addEventListener('DOMContentLoaded', () => {
+        const accountBtn = document.getElementById('account-btn');
+        if (accountBtn) {
+          accountBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            const isLoggedIn = sessionStorage.getItem('currentUser') != null;
+            if (isLoggedIn) {
+              const menu = document.getElementById('account-dropdown');
+              if (menu) {
+                menu.classList.toggle('active');
+              } else {
+                window.location.href = '/login';
+              }
+            } else {
+              window.location.href = '/login';
+            }
+          });
+        }
+
+        // Đóng dropdown khi click ra ngoài
+        document.addEventListener('click', (event) => {
+          const menu = document.getElementById('account-dropdown');
+          const accountBtn = document.getElementById('account-btn');
+          if (menu && menu.classList.contains('active') && !menu.contains(event.target) && !accountBtn.contains(event.target)) {
+            menu.classList.remove('active');
+          }
+        });
+
+        // Xử lý đăng xuất
+        const logoutBtn = document.getElementById('logout-btn');
+        if (logoutBtn) {
+          logoutBtn.addEventListener('click', async (e) => {
+            e.preventDefault();
+            try {
+              const res = await fetch('/logout', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' }
+              });
+              const data = await res.json();
+              if (data.status === 'SUCCESS') {
+                sessionStorage.removeItem('currentUser');
+                window.location.href = '/';
+              } else {
+                alert('Đăng xuất thất bại: ' + (data.message || 'Lỗi không xác định'));
+              }
+            } catch (error) {
+              console.error('Logout error:', error);
+              alert('Lỗi kết nối khi đăng xuất');
+            }
+          });
+        }
+      });
+      async function addToWishlist(productId , btnElement) {
+      console.log("Đã add sản phẩm vào wishlist: " +  productId); 
+      const svgIcon = btnElement.querySelector('svg');  
+      const isWished = btnElement.classList.toggle('active');
+      let userId = null;
+      try {
+          userId = JSON.parse(sessionStorage.getItem('currentUser')).id;
+      } catch (e) {
+          showToast('Vui lòng đăng nhập để thao tác với wishlist', 'error');
+          window.location.href = '/login';
+          return;
+      }
+
+      if(isWished){
+        svgIcon.style.fill = '#e74c3c';   
+       
+
+        const res = await fetch('/wishlist/add', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            userId: userId,
+            productId: productId
+          })
+        });
+        const data = await res.json();
+        if (data.status === 'SUCCESS') {
+          showToast('Thêm vào wishlist thành công', 'success');
+        } else {
+          showToast('Thêm vào wishlist thất bại: ' + (data.message || 'Lỗi không xác định'), 'error');
+        }
+      }else{
+        svgIcon.style.fill = 'none';
+        svgIcon.style.stroke = 'currentColor';
+
+        const res = await fetch('/wishlist/remove', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            userId: userId,
+            productId: productId
+          })
+        });
+        const data = await res.json();
+        if (data.status === 'SUCCESS') {
+          showToast('Đã xóa khỏi wishlist', 'success');
+        } else {
+          showToast('Xóa khỏi wishlist thất bại: ' + (data.message || 'Lỗi không xác định'), 'error');
+        }
+      } 
+      } 
+      function showToast(message, type = 'info') {
+      let container = document.getElementById('toast-container');
+      if (!container) {
+        container = document.createElement('div');
+        container.id = 'toast-container';
+        document.body.appendChild(container);
+      }
+
+      // Tạo phần tử thông báo
+      const toast = document.createElement('div');
+      toast.className = `toast-msg toast-${type}`;
+      toast.innerText = message;
+
+      // Thêm vào container
+      container.appendChild(toast);
+
+      // Tự động ẩn và xóa sau 3 giây
+      setTimeout(() => {
+        toast.style.opacity = '0'; // Làm mờ
+        setTimeout(() => {
+          if (toast.parentNode) {
+            toast.parentNode.removeChild(toast); // Xóa khỏi DOM
+          }
+        }, 300); // Đợi làm mờ xong rồi xóa
+      }, 3000);
+    }
+    </script>
+    
+  </body>
+</html>

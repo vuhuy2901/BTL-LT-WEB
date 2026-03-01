@@ -72,7 +72,7 @@
         <form id="loginForm">
             <div class="form-group">
                 <label for="email">Email</label>
-                <input type="email" id="email" required />
+                <input type="text" id="email" required />
             </div>
             <div class="form-group">
                 <label for="password">Mật khẩu</label>
@@ -112,7 +112,7 @@
             submitBtn.textContent = 'Đang xử lý...';
 
             const payload = {
-                email: document.getElementById('email').value.trim(),
+                identifier: document.getElementById('email').value.trim(),
                 password: document.getElementById('password').value
             };
 
@@ -127,6 +127,7 @@
                 
                 if (data.status === 'SUCCESS') {
                     showToast('Đăng nhập thành công! Đang chuyển hướng...', 'success');
+                    sessionStorage.setItem('currentUser', JSON.stringify(data.data));
                     setTimeout(() => window.location.href = '/', 1500);
                 } else {
                     showToast(data.message || 'Lỗi không xác định từ server', 'error');

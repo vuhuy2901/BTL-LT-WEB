@@ -37,18 +37,13 @@ public class ClientAuthController {
         return "client/register";
     }
 
-    // ========== API ==========
-
-    /**
-     * Đăng nhập chung cho tất cả role.
-     * identifier = email (CLIENT) hoặc username (ADMIN/STAFF)
-     */
+    
     @PostMapping("/login")
     @ResponseBody
     public ResponseEntity<ApiResponse<Object>> login(
             @RequestBody @Valid LoginDto loginDto,
-            HttpSession session,
-            BindingResult bindingResult) {
+            BindingResult bindingResult,
+            HttpSession session) {
 
         if (bindingResult.hasErrors()) {
             StringBuilder errorMsg = new StringBuilder();
@@ -97,15 +92,15 @@ public class ClientAuthController {
     @PostMapping("/logout")
     @ResponseBody
     public ResponseEntity<ApiResponse<Object>> logout(HttpSession session) {
+        
         return userService.logout(session);
     }
 
-    /**
-     * Lấy thông tin user đang đăng nhập
-     */
+    
     @GetMapping("/profile")
     @ResponseBody
     public ResponseEntity<ApiResponse<Object>> getProfile(HttpSession session) {
         return userService.getProfile(session);
     }
+
 }

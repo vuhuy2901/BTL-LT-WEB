@@ -3,6 +3,7 @@ package com.example.WebBanHang.service;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Date;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -30,6 +31,9 @@ public class SportService {
             new ApiResponse<>("SUCCESS", "Thêm môn thể thao thành công", sport)
         );
     } 
+    public List<Sport> getAllSports() {
+        return repo.findAll();
+    }  
     public ResponseEntity<ApiResponse> listSport(){
         return ResponseEntity.ok().body(
             new ApiResponse<>("SUCCESS", "Lấy danh sách môn thể thao thành công", repo.findAll())

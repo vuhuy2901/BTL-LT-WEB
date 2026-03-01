@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title th:text="${product.name} + ' - SportZone'">SportZone - Premium Sports Equipment</title>
+    <link rel="stylesheet" href="/css/client/index.css">
+    <style>
+      .product-detail-container {
+        padding: 4rem 1rem;
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 3rem;
+      }
+
+      @media (min-width: 768px) {
+        .product-detail-container {
+          grid-template-columns: 1fr 1fr;
+        }
+      }
+
+      .product-detail-image img {
+        width: 100%;
+        border-radius: 1rem;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        object-fit: cover;
+      }
+
+      .product-detail-info h1 {
+        font-size: 2.5rem;
+        font-weight: bold;
+        color: var(--gray-900);
+        margin-bottom: 0.5rem;
+      }
+
+      .product-detail-info .category {
+        color: var(--primary-blue);
+        font-weight: 600;
+        margin-bottom: 1.5rem;
+      }
+
+      .product-detail-info .price-container {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        margin-bottom: 1.5rem;
+      }
+
+      .product-detail-info .sale-price {
+        font-size: 2rem;
+        font-weight: bold;
+        color: #e74c3c;
+      }
+
+      .product-detail-info .base-price {
+        font-size: 1.25rem;
+        color: var(--gray-400);
+        text-decoration: line-through;
+      }
+
+      .product-detail-info .description {
+        font-size: 1.1rem;
+        color: var(--gray-600);
+        margin-bottom: 2rem;
+        line-height: 1.8;
+      }
+
+      .product-detail-info .add-to-cart-btn {
+        width: 100%;
+        padding: 1rem 0;
+        font-size: 1.25rem;
+        background-color: var(--primary-blue);
+        color: white;
+        border: none;
+        border-radius: 0.5rem;
+        font-weight: bold;
+        cursor: pointer;
+        transition: background-color 0.3s;
+      }
+
+      .product-detail-info .add-to-cart-btn:hover {
+        background-color: #1d4ed8;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Header (Giữ nguyên như index) -->
+    <header>
+      <div class="container" style="display: flex; align-items: center; justify-content: space-between; padding: 1rem;">
+        <a href="/" class="logo" style="display: flex; align-items: center; gap: 0.5rem; font-size: 1.5rem; font-weight: bold; color: var(--primary-blue); text-decoration: none;">
+          <svg viewBox="0 0 24 24" width="32" height="32" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polyline>
+          </svg>
+          <span>SportZone</span>
+        </a>
+        <a href="/" style="font-weight: bold; color: var(--gray-700); text-decoration: none;">&larr; Quay lại Trang chủ</a>
+      </div>
+    </header>
+
+    <div class="container product-detail-container" th:if="${product != null}">
+      <!-- Cột Trái: Ảnh sản phẩm -->
+      <div class="product-detail-image">
+        <img th:src="${product.thumbnailUrl != null ? product.thumbnailUrl : 'https://images.pexels.com/photos/2529148/pexels-photo-2529148.jpeg?auto=compress&cs=tinysrgb&w=800'}" th:alt="${product.name}">
+      </div>
+
+      <!-- Cột Phải: Thông tin chi tiết -->
+      <div class="product-detail-info">
+        <div class="category" th:text="${product.gender != null ? product.gender : 'Unisex'}">Danh mục</div>
+        <h1 th:text="${product.name}">Tên sản phẩm</h1>
+        
+        <div class="sale-countdown-wrapper" th:if="${product.saleEnd != null}" style="display: flex; align-items: center; gap: 0.25rem; margin-bottom: 1.5rem; background: #fef2f2; padding: 0.5rem 1rem; border-radius: 0.25rem; width: fit-content;">
+            <svg style="color: #ef4444; width: 16px; height: 16px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="10"></circle>
+              <polyline points="12 6 12 12 16 14"></polyline>
+            </svg>
+            <span class="sale-timer-text" style="font-size: 0.85rem; font-weight: bold; color: #b91c1c;" th:data-sale-end="${product.saleEnd}">Đang tính toán Flash Sale...</span>
+        </div>
+
+        <div class="price-container">
+          <span class="sale-price" th:text="${product.salePrice != null ? #numbers.formatDecimal(product.salePrice, 0, 'COMMA', 0, 'POINT') + 'đ' : #numbers.formatDecimal(product.basePrice, 0, 'COMMA', 0, 'POINT') + 'đ'}">0đ</span>
+          <span class="base-price" th:if="${product.salePrice != null and product.basePrice > product.salePrice}" th:text="${#numbers.formatDecimal(product.basePrice, 0, 'COMMA', 0, 'POINT') + 'đ'}">0đ</span>
+        </div>
+
+        <p class="description" th:text="${product.description}">
+          Mô tả chi tiết sản phẩm sẽ hiển thị ở đây.
+        </p>
+
+        <button class="add-to-cart-btn" th:onclick="'alert(\'Đã thêm ' + ${product.name} + ' vào giỏ hàng!\')'">
+          THÊM VÀO GIỎ HÀNG
+        </button>
+      </div>
+    </div>
+
+    <div class="container" th:if="${product == null}" style="text-align: center; padding: 4rem;">
+      <h2>Sản phẩm không tồn tại hoặc đã bị xóa.</h2>
+      <a href="/" style="display: inline-block; margin-top: 1rem; color: var(--primary-blue);">Quay lại trang chủ</a>
+    </div>
+
+    <!-- Script đếm ngược -->
+    <script>
+        function initCountdowns() {
+          const timerElements = document.querySelectorAll('.sale-timer-text');
+          timerElements.forEach(el => {
+            const endTimeRaw = el.getAttribute('data-sale-end');
+            if (!endTimeRaw) return;
+            const countDownDate = new Date(endTimeRaw).getTime();
+  
+            const updateTimer = () => {
+              const now = new Date().getTime();
+              const distance = countDownDate - now;
+  
+              if (distance < 0) {
+                el.innerHTML = "Đã kết thúc Flash Sale";
+                el.closest('.sale-countdown-wrapper').style.opacity = '0.5';
+                return true; 
+              }
+  
+              const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+              const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+              const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+              const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+              
+              let timeString = "";
+              if(days > 0) timeString += `${days} ngày `;
+              timeString += `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+              
+              el.innerHTML = "Kết thúc sau " + timeString;
+              return false;
+            };
+  
+            if (!updateTimer()) {
+              const interval = setInterval(() => {
+                if (updateTimer()) clearInterval(interval);
+              }, 1000);
+            }
+          });
+        }
+  
+        document.addEventListener('DOMContentLoaded', () => {
+          initCountdowns();
+        });
+    </script>
+  </body>
+</html>

@@ -1,0 +1,8 @@
+src/main/java/com/example/WebBanHang/controller/ClientAuthController.java
+src/main/java/com/example/WebBanHang/controller/HomeController.java
+src/main/java/com/example/WebBanHang/dto/LoginDto.java
+src/main/java/com/example/WebBanHang/dto/UserRegistrationDto.java
+src/main/java/com/example/WebBanHang/model/Product.java
+src/main/java/com/example/WebBanHang/service/UserService.java
+src/main/resources/templates/client/login.html
+src/main/resources/templates/client/register.html

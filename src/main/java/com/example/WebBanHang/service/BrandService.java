@@ -1,5 +1,7 @@
 package com.example.WebBanHang.service;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 
@@ -26,6 +28,9 @@ public class BrandService {
         )   ; 
          
     }
+    public List<Brand> getAllBrands() {
+        return repo.findAll();
+    } 
     public ResponseEntity<ApiResponse> listBrand() {
         try {
             return ResponseEntity.ok().body(

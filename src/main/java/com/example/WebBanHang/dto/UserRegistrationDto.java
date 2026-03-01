@@ -29,7 +29,7 @@ public class UserRegistrationDto {
     @NotBlank(message = "Mật khẩu không được để trống")
     private String password;
 
-    @NotNull(message = "Ngày sinh không được để trống")
+    @NotNull(message = "Ngày sinh không được để trống ")
     private LocalDate dateOfBirth;
 
     @NotBlank(message = "Giới tính không được để trống")

@@ -1,0 +1,116 @@
+### 1. Thêm Danh mục (Categories)
+POST http://localhost:8080/category/add
+Content-Type: application/json
+
+{
+  "name": "Giày thể thao",
+  "description": "Các loại giày dành cho tập luyện và thi đấu"
+}
+
+###
+POST http://localhost:8080/category/add
+Content-Type: application/json
+
+{
+  "name": "Quần áo thể thao",
+  "description": "Trang phục thấm hút mồ hôi, co giãn tốt"
+}
+
+###
+POST http://localhost:8080/category/add
+Content-Type: application/json
+
+{
+  "name": "Phụ kiện",
+  "description": "Balo, tất, băng đô, bình nước..."
+}
+
+### 2. Thêm Thương hiệu (Brands)
+POST http://localhost:8080/brand/add
+Content-Type: application/json
+
+{
+  "name": "Nike",
+  "description": "Thương hiệu thể thao hàng đầu thế giới",
+  "logoUrl": "https://upload.wikimedia.org/wikipedia/commons/a/a6/Logo_NIKE.svg"
+}
+
+###
+POST http://localhost:8080/brand/add
+Content-Type: application/json
+
+{
+  "name": "Adidas",
+  "description": "Thương hiệu thể thao đến từ Đức",
+  "logoUrl": "https://upload.wikimedia.org/wikipedia/commons/2/20/Adidas_Logo.svg"
+}
+
+### 3. Thêm Môn thể thao (Sports)
+POST http://localhost:8080/sport/add
+Content-Type: application/json
+
+{
+  "name": "Bóng đá",
+  "description": "Môn thể thao vua"
+}
+
+###
+POST http://localhost:8080/sport/add
+Content-Type: application/json
+
+{
+  "name": "Chạy bộ",
+  "description": "Điền kinh, chạy marathon"
+}
+
+### 4. Thêm Sản phẩm (Products)
+# Lưu ý: categoryId, brandId, sportId phải khớp với ID sinh ra từ các request trên (thường là 1, 2, 3...)
+POST http://localhost:8080/product/add
+Content-Type: application/json
+
+{
+  "name": "Giày chạy bộ Nike Air Zoom Pegasus 39",
+  "categoryId": 1,
+  "sportId": 2,
+  "brandId": 1,
+  "description": "Giày chạy bộ quốc dân với đệm Air Zoom êm ái, thích hợp cho việc tập luyện hàng ngày.",
+  "gender": "Nam",
+  "basePrice": 3200000.0,
+  "salePrice": 2850000.0,
+  "thumbnailUrl": "https://images.pexels.com/photos/2529148/pexels-photo-2529148.jpeg?auto=compress&cs=tinysrgb&w=800",
+  "isActive": true
+}
+
+###
+POST http://localhost:8080/product/add
+Content-Type: application/json
+
+{
+  "name": "Áo thun thể thao Adidas Core 18",
+  "categoryId": 2,
+  "sportId": 1,
+  "brandId": 2,
+  "description": "Áo thun tập luyện cơ bản, chất liệu Climalite thấm hút mồ hôi cực tốt.",
+  "gender": "Nam",
+  "basePrice": 650000.0,
+  "salePrice": 490000.0,
+  "thumbnailUrl": "https://images.pexels.com/photos/8032765/pexels-photo-8032765.jpeg?auto=compress&cs=tinysrgb&w=800",
+  "isActive": true
+}
+
+###
+POST http://localhost:8080/product/add
+Content-Type: application/json
+
+{
+  "name": "Túi trống thể thao Nike Brasilia",
+  "categoryId": 3,
+  "sportId": 2,
+  "brandId": 1,
+  "description": "Túi trống cỡ trung, rộng rãi, chống nước nhẹ, phù hợp đi tập gym hoặc du lịch ngắn ngày.",
+  "gender": "Unisex",
+  "basePrice": 890000.0,
+  "salePrice": 750000.0,
+  "thumbnailUrl": "https://images.pexels.com/photos/3766217/pexels-photo-3766217.jpeg?auto=compress&cs=tinysrgb&w=800",
+  "isActive": true
+}

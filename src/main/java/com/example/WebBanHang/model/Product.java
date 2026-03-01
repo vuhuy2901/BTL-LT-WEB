@@ -64,6 +64,15 @@ public class Product {
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
+    @Column(name = "sold_quantity", columnDefinition = "INT DEFAULT 0")
+    private Integer soldQuantity = 0;
+
+    @Column(name = "review_count", columnDefinition = "INT DEFAULT 0")
+    private Integer reviewCount = 0;
+
+    @Column(name = "average_rating", columnDefinition = "DECIMAL(3,2) DEFAULT 0.00")
+    private Double averageRating = 0.0;
+
     public enum Gender {
         Nam, Nu, Unisex
     }

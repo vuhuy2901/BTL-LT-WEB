@@ -2,6 +2,8 @@ package com.example.WebBanHang.repository;
 
 import java.util.List;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -15,4 +17,5 @@ public interface ProductRepository extends JpaRepository<Product, Integer> {
     public List<Product> findByBrandId(Integer brandId);
     public List<Product> findByIsActiveTrue();
     public List<Product> findByNameContainingIgnoreCase(String keyword);
+    public Page<Product> findByIsActiveTrue(Pageable pageable);
 }
