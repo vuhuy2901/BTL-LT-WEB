@@ -1,5 +1,6 @@
 package com.example.WebBanHang.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import java.time.LocalDate;
 
 import jakarta.validation.constraints.Email;
@@ -30,6 +31,7 @@ public class UserRegistrationDto {
     private String password;
 
     @NotNull(message = "Ngày sinh không được để trống ")
+    @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate dateOfBirth;
 
     @NotBlank(message = "Giới tính không được để trống")

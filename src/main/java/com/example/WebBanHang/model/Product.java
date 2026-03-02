@@ -39,10 +39,10 @@ public class Product {
     private Gender gender;
 
     @Column(name = "base_price", nullable = false)
-    private Double basePrice;
+    private Long basePrice;
 
     @Column(name = "sale_price") 
-    private Double salePrice;
+    private Long salePrice;
 
     @Column(name = "sale_start")
     private LocalDateTime saleStart;

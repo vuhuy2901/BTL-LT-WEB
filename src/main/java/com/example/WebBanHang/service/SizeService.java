@@ -30,6 +30,17 @@ public class SizeService {
 
     public ResponseEntity<ApiResponse> addSize(Size size) {
         try {
+            String name = size.getName().trim() ;
+            if (name.isEmpty()) {
+                return ResponseEntity.badRequest().body(
+                    new ApiResponse<>("ERROR", "Tên kích cỡ không được để trống", null)
+                ) ;
+            } 
+            if (repo.findByName(name) != null) {
+                return ResponseEntity.badRequest().body(
+                    new ApiResponse<>("ERROR", "Tên kích cỡ đã tồn tại", null)
+                ) ;
+            }  
             if (size.getOrder() == null) {
                 int maxOrder = repo.findAllByOrderByOrderAsc()
                     .stream()

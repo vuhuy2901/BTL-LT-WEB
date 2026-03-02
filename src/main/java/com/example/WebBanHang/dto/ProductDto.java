@@ -32,10 +32,10 @@ public class ProductDto {
 
     @NotNull(message = "Giá gốc không được để trống")
     @Min(value = 0, message = "Giá gốc phải >= 0")
-    private Double basePrice;
+    private Long basePrice;
 
     @Min(value = 0, message = "Giá sale phải >= 0")
-    private Double salePrice;
+    private     Long  salePrice;
 
     private LocalDateTime saleStart;
     private LocalDateTime saleEnd;

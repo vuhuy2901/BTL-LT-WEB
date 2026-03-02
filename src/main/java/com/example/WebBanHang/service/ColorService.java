@@ -28,6 +28,17 @@ public class ColorService {
 
     public ResponseEntity<ApiResponse> addColor(Color color) {
         try {
+            String name = color.getName().trim() ;
+            if (name.isEmpty()) {
+                return ResponseEntity.badRequest().body(
+                    new ApiResponse<>("ERROR", "Tên màu sắc không được để trống", null)
+                ) ;
+            } 
+            if (repo.findByName(name) != null) {
+                return ResponseEntity.badRequest().body(
+                    new ApiResponse<>("ERROR", "Tên màu sắc đã tồn tại", null)
+                ) ;
+            }  
             return ResponseEntity.ok().body(
                 new ApiResponse<>("SUCCESS", "Thêm màu sắc thành công", repo.save(color))
             );

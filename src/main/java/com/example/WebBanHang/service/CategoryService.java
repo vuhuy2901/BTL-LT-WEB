@@ -31,9 +31,21 @@ public class CategoryService {
     }
     public ResponseEntity<ApiResponse> addCategory(Category category) {
         try {
+            String name = category.getName().trim() ;
+            if (name.isEmpty()) {
+                return ResponseEntity.badRequest().body(
+                    new ApiResponse<>("ERROR", "Tên danh mục không được để trống", null)
+                ) ;
+            } 
+            if (repo.findByName(name) != null) {
+                return ResponseEntity.badRequest().body(
+                    new ApiResponse<>("ERROR", "Tên danh mục đã tồn tại", null)
+                ) ;
+            }  
             return ResponseEntity.ok().body(
                 new ApiResponse<>("SUCCESS", "Thêm danh mục thành công", repo.save(category))
             )   ; 
+
        } catch (Exception e) {
         return ResponseEntity.badRequest().body(
             new ApiResponse<>("ERROR", "Lỗi Server" , null ) 

@@ -1,11 +1,15 @@
 package com.example.WebBanHang.service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
@@ -14,6 +18,7 @@ import com.example.WebBanHang.dto.ProductDto;
 import com.example.WebBanHang.dto.ProductSummaryDto;
 import com.example.WebBanHang.model.Product;
 import com.example.WebBanHang.repository.ProductRepository;
+import com.example.WebBanHang.service.WishListService;
 
 @Service
 public class ProductService {
@@ -25,6 +30,8 @@ public class ProductService {
         return repo.findByIsActiveTrue(pageable);
     }
 
+    @Autowired
+    private WishListService wishListService;
 
     public ResponseEntity<ApiResponse> listProduct() {
         try {
@@ -37,9 +44,75 @@ public class ProductService {
             );
         }
     }
-
    
-    
+    public ResponseEntity<ApiResponse> listSummary(Integer userId) {
+        try {
+            // Lấy danh sách ID đã thích của user (nếu có)
+            List<Integer> wishListProductIds = (userId != null) ? 
+                wishListService.getWishListProductIds(userId) : List.of();
+
+            List<ProductSummaryDto> summaries = repo.findByIsActiveTrue()
+                .stream()
+                .map(p -> {
+                    Integer discount = null;
+                    if (p.getSalePrice() != null && p.getBasePrice() > 0
+                        && p.getSaleEnd() != null && p.getSaleEnd().isAfter(LocalDateTime.now()) 
+                        && p.getSaleStart() != null && p.getSaleStart().isBefore(LocalDateTime.now())) {
+                        discount = (int) Math.round((p.getBasePrice() - p.getSalePrice()) * 100.0 / p.getBasePrice());
+                    }
+                    Boolean isWished = wishListProductIds.contains(p.getId());
+                    return new ProductSummaryDto(
+                        p.getId(),
+                        p.getName(),
+                        p.getThumbnailUrl(),
+                        p.getBasePrice(),
+                        discount != null ? p.getSalePrice() : null,
+                        p.getGender() != null ? p.getGender().name() : null,
+                        p.getSaleStart(),
+                        p.getSaleEnd(),
+                        discount,
+                        isWished
+                    );
+                })
+                .collect(Collectors.toList());
+            return ResponseEntity.ok().body(
+                new ApiResponse<>("SUCCESS", "Lấy danh sách sản phẩm thành công", summaries)
+            );
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(
+                new ApiResponse<>("ERROR", "Lỗi Server", null)
+            );
+        }
+    }
+
+    public Page<ProductSummaryDto> listSummaryPaginated(Integer userId, Pageable pageable) {
+        List<Integer> wishListProductIds = (userId != null) ? 
+            wishListService.getWishListProductIds(userId) : List.of();
+
+        Page<Product> productPage = repo.findByIsActiveTrue(pageable);
+        
+        return productPage.map(p -> {
+            Integer discount = null;
+            if (p.getSalePrice() != null && p.getBasePrice() > 0
+                && p.getSaleEnd() != null && p.getSaleEnd().isAfter(LocalDateTime.now())  
+                && p.getSaleStart() != null && p.getSaleStart().isBefore(LocalDateTime.now())) {
+                discount = (int) Math.round((p.getBasePrice() - p.getSalePrice()) * 100.0 / p.getBasePrice());
+            }
+            Boolean isWished = wishListProductIds.contains(p.getId());
+            return new ProductSummaryDto(
+                p.getId(),
+                p.getName(),
+                p.getThumbnailUrl(),
+                p.getBasePrice(),
+                discount != null ? p.getSalePrice() : null,
+                p.getGender() != null ? p.getGender().name() : null,
+                p.getSaleStart(),
+                p.getSaleEnd(),
+                discount,
+                isWished
+            );
+        });
+    }
 
     public ResponseEntity<ApiResponse> searchProduct(String keyword) {
         try {
@@ -163,5 +236,70 @@ public class ProductService {
                 new ApiResponse<>("ERROR", "Lỗi Server", null)
             );
         }
+    }
+    public Page<ProductSummaryDto> filterProducts(
+        Integer userId,
+        List<Integer> categoryIds,
+        List<Integer> sportIds,
+        List<Integer> brandIds,
+        String sortBy,
+        Long minPrice,
+        Long maxPrice,
+        Pageable pageable) {
+
+    Specification<Product> spec = (root, query, cb) -> cb.conjunction();
+
+    // SỬA Ở ĐÂY: Thay vì get("category").get("id"), chỉ cần get("categoryId")
+    if (categoryIds != null && !categoryIds.isEmpty())
+        spec = spec.and((root, q, cb) -> root.get("categoryId").in(categoryIds));
+
+    if (sportIds != null && !sportIds.isEmpty())
+        spec = spec.and((root, q, cb) -> root.get("sportId").in(sportIds));
+
+    if (brandIds != null && !brandIds.isEmpty())
+        spec = spec.and((root, q, cb) -> root.get("brandId").in(brandIds));
+
+    if (minPrice != null)
+        spec = spec.and((root, q, cb) -> cb.greaterThanOrEqualTo(root.get("basePrice"), minPrice));
+
+    if (maxPrice != null)
+        spec = spec.and((root, q, cb) -> cb.lessThanOrEqualTo(root.get("basePrice"), maxPrice));
+
+    // sort
+    Sort sort = switch (sortBy != null ? sortBy : "newest") {
+        case "price_asc"  -> Sort.by("basePrice").ascending();
+        case "price_desc" -> Sort.by("basePrice").descending();
+        case "name_asc"   -> Sort.by("name").ascending();
+        default           -> Sort.by("createdAt").descending();
+    };
+
+    Pageable sortedPageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), sort);
+    Page<Product> productPage = repo.findAll(spec, sortedPageable);
+
+    List<Integer> wishListProductIds = (userId != null) ? 
+        wishListService.getWishListProductIds(userId) : List.of();
+
+    return productPage.map(p -> mapToDto(p, wishListProductIds));
+}
+
+    private ProductSummaryDto mapToDto(Product p, List<Integer> wishListProductIds) {
+        Integer discount = null;
+        if (p.getSalePrice() != null && p.getBasePrice() > 0
+            && p.getSaleEnd() != null && p.getSaleEnd().isAfter(LocalDateTime.now())  && p.getSaleStart() != null && p.getSaleStart().isBefore(LocalDateTime.now()) )  {
+            discount = (int) Math.round((p.getBasePrice() - p.getSalePrice()) * 100.0 / p.getBasePrice());
+        }
+        Boolean isWished = wishListProductIds.contains(p.getId());
+        return new ProductSummaryDto(
+            p.getId(),
+            p.getName(),
+            p.getThumbnailUrl(),
+            p.getBasePrice(),
+            discount != null ? p.getSalePrice() : null,
+            p.getGender() != null ? p.getGender().name() : null,
+            p.getSaleStart(),
+            p.getSaleEnd(),
+            discount,
+            isWished
+        );
     }
 }

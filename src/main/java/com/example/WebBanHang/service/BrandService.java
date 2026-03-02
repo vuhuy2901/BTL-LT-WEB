@@ -22,6 +22,14 @@ public class BrandService {
                 new ApiResponse<>("ERROR", "Tên thương hiệu không được để trống", null)
             ) ;
         }
+        String name = brand.getName().trim() ;
+         
+        
+        if (repo.findByName(name) != null) {
+            return ResponseEntity.badRequest().body(
+                new ApiResponse<>("ERROR", "Tên thương hiệu đã tồn tại", null)
+            ) ;
+        } 
         repo.save(brand) ; 
         return ResponseEntity.ok().body(
             new ApiResponse<>("SUCCESS", "Thêm thương hiệu thành công", brand)

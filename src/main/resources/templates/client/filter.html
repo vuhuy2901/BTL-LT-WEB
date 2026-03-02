@@ -1,0 +1,1263 @@
+<!doctype html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Lọc sản phẩm - SportZone</title>
+  <style>
+    /* ════════════════════════════════════════════════
+       RESET & BASE
+    ════════════════════════════════════════════════ */
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --primary-blue: #2563eb;
+      --primary-blue-dark: #1d4ed8;
+      --primary-cyan: #06b6d4;
+      --gray-900: #111827;
+      --gray-800: #1f2937;
+      --gray-700: #374151;
+      --gray-600: #4b5563;
+      --gray-500: #6b7280;
+      --gray-400: #9ca3af;
+      --gray-300: #d1d5db;
+      --gray-200: #e5e7eb;
+      --gray-100: #f3f4f6;
+      --gray-50:  #f9fafb;
+      --white:    #ffffff;
+      --red:      #e74c3c;
+      --red-dark: #c0392b;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', sans-serif;
+      color: var(--gray-700);
+      background-color: var(--gray-50);
+      line-height: 1.6;
+    }
+
+    /* ════════════════════════════════════════════════
+       HEADER
+    ════════════════════════════════════════════════ */
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      background-color: var(--white);
+      box-shadow: 0 1px 3px rgba(0,0,0,.1);
+    }
+
+    header .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 1rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: .5rem;
+      font-size: 1.5rem;
+      font-weight: bold;
+      background: linear-gradient(to right, var(--primary-blue), var(--primary-cyan));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      text-decoration: none;
+    }
+    .logo svg { width: 2rem; height: 2rem; color: var(--primary-blue); }
+
+    nav {
+      display: none;
+      gap: 2rem;
+    }
+    nav a {
+      color: var(--gray-700);
+      text-decoration: none;
+      font-weight: 500;
+      transition: color .3s;
+    }
+    nav a:hover { color: var(--primary-blue); }
+
+    @media (min-width: 768px) { nav { display: flex; } }
+
+    /* nav dropdown */
+    .nav-dropdown-wrapper { position: relative; display: inline-block; }
+    .nav-dropdown {
+      position: absolute;
+      top: 100%;
+      left: 0;
+      background-color: var(--white);
+      box-shadow: 0 10px 25px rgba(0,0,0,.1);
+      border-radius: .5rem;
+      min-width: 200px;
+      opacity: 0;
+      visibility: hidden;
+      transform: translateY(10px);
+      transition: all .3s ease;
+      z-index: 50;
+      padding: .5rem 0;
+      border: 1px solid var(--gray-200);
+    }
+    .nav-dropdown-wrapper:hover .nav-dropdown {
+      opacity: 1;
+      visibility: visible;
+      transform: translateY(0);
+    }
+    .nav-dropdown a {
+      display: block;
+      padding: .75rem 1.5rem;
+      color: var(--gray-700);
+      text-decoration: none;
+      transition: background-color .2s;
+    }
+    .nav-dropdown a:hover {
+      background-color: var(--gray-50);
+      color: var(--primary-blue);
+    }
+
+    /* header actions */
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .search-container {
+      display: flex;
+      align-items: center;
+      background-color: var(--gray-50);
+      border: 1px solid var(--gray-200);
+      border-radius: 9999px;
+      padding-left: 1rem;
+      transition: all .3s ease;
+    }
+    .search-container:focus-within {
+      border-color: var(--primary-blue);
+      box-shadow: 0 0 0 2px rgba(37,99,235,.1);
+    }
+    .search-input {
+      border: none;
+      background: transparent;
+      outline: none;
+      font-size: .9rem;
+      width: 140px;
+      color: var(--gray-800);
+      transition: width .3s ease;
+    }
+    .search-input:focus { width: 200px; }
+    .search-container .icon-btn { background: transparent; }
+
+    @media (max-width: 767px) {
+      .search-input { display: none; }
+      .search-container { border: none; background: transparent; padding-left: 0; }
+    }
+
+    .icon-btn {
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: .5rem;
+      border-radius: 50%;
+      transition: background-color .3s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+    }
+    .icon-btn:hover { background-color: var(--gray-100); }
+    .icon-btn svg { width: 1.25rem; height: 1.25rem; color: var(--gray-700); }
+
+    .cart-badge {
+      position: absolute;
+      top: -.25rem;
+      right: -.25rem;
+      background-color: var(--primary-blue);
+      color: var(--white);
+      font-size: .75rem;
+      border-radius: 50%;
+      width: 1.25rem;
+      height: 1.25rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+    }
+
+    /* account dropdown */
+    .account-wrapper { position: relative; }
+    .account-dropdown {
+      position: absolute;
+      top: calc(100% + 10px);
+      right: 0;
+      background-color: var(--white);
+      border-radius: .5rem;
+      box-shadow: 0 10px 25px rgba(0,0,0,.1);
+      width: 180px;
+      opacity: 0;
+      visibility: hidden;
+      transform: translateY(-10px);
+      transition: all .3s ease;
+      z-index: 50;
+      border: 1px solid var(--gray-200);
+    }
+    .account-dropdown.active {
+      opacity: 1;
+      visibility: visible;
+      transform: translateY(0);
+    }
+    .account-dropdown .dropdown-header {
+      padding: 1rem;
+      border-bottom: 1px solid var(--gray-200);
+      color: var(--gray-800);
+    }
+    .account-dropdown a {
+      display: flex;
+      align-items: center;
+      gap: .75rem;
+      padding: .75rem 1rem;
+      color: var(--gray-700);
+      text-decoration: none;
+      transition: background-color .2s;
+    }
+    .account-dropdown a:hover {
+      background-color: var(--gray-50);
+      color: var(--primary-blue);
+    }
+    .account-dropdown a svg { width: 1.25rem; height: 1.25rem; }
+
+    /* ════════════════════════════════════════════════
+       FILTER PAGE LAYOUT
+    ════════════════════════════════════════════════ */
+    .filter-page {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 2rem 1rem 4rem;
+      display: grid;
+      grid-template-columns: 260px 1fr;
+      gap: 2rem;
+      align-items: start;
+    }
+
+    /* breadcrumb */
+    .breadcrumb {
+      grid-column: 1 / -1;
+      display: flex;
+      align-items: center;
+      gap: .4rem;
+      font-size: .85rem;
+      color: var(--gray-500);
+      margin-bottom: .25rem;
+    }
+    .breadcrumb a { color: var(--gray-500); text-decoration: none; }
+    .breadcrumb a:hover { color: var(--primary-blue); }
+    .breadcrumb svg { width: 14px; height: 14px; color: var(--gray-400); }
+
+    /* active filter tags */
+    .active-filters {
+      grid-column: 1 / -1;
+      display: flex;
+      flex-wrap: wrap;
+      gap: .5rem;
+      min-height: 24px;
+    }
+    .active-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: .4rem;
+      background: #dbeafe;
+      color: var(--primary-blue);
+      border-radius: 9999px;
+      padding: .25rem .75rem;
+      font-size: .8rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background .15s;
+    }
+    .active-tag:hover { background: #bfdbfe; }
+    .active-tag svg { width: 12px; height: 12px; }
+    .clear-all-btn {
+      background: none;
+      border: none;
+      font-size: .8rem;
+      color: var(--gray-500);
+      text-decoration: underline;
+      cursor: pointer;
+      align-self: center;
+      font-family: inherit;
+    }
+    .clear-all-btn:hover { color: var(--gray-700); }
+
+    /* mobile row */
+    .mobile-row {
+      grid-column: 1 / -1;
+      display: none;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .mobile-filter-toggle {
+      display: none;
+      align-items: center;
+      gap: .5rem;
+      padding: .55rem 1.1rem;
+      background: var(--white);
+      border: 1px solid var(--gray-300);
+      border-radius: 9999px;
+      font-size: .875rem;
+      font-family: inherit;
+      color: var(--gray-700);
+      cursor: pointer;
+      font-weight: 600;
+      transition: border-color .2s, color .2s;
+    }
+    .mobile-filter-toggle:hover { border-color: var(--primary-blue); color: var(--primary-blue); }
+    .mobile-filter-toggle svg { width: 16px; height: 16px; }
+
+    .sidebar-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,.4);
+      z-index: 99;
+    }
+
+    /* ════════════════════════════════════════════════
+       SIDEBAR
+    ════════════════════════════════════════════════ */
+    .sidebar {
+      position: sticky;
+      top: 90px;
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+    }
+
+    .filter-card {
+      background: var(--white);
+      border-radius: .75rem;
+      box-shadow: 0 1px 3px rgba(0,0,0,.1);
+      overflow: hidden;
+    }
+
+    .filter-card-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: .9rem 1.25rem;
+      border-bottom: 1px solid var(--gray-100);
+      cursor: pointer;
+      user-select: none;
+      transition: background .15s;
+    }
+    .filter-card-header:hover { background: var(--gray-50); }
+    .filter-card-header h4 {
+      font-size: .95rem;
+      font-weight: 700;
+      color: var(--gray-800);
+    }
+    .filter-card-header .chevron {
+      width: 16px;
+      height: 16px;
+      color: var(--gray-500);
+      transition: transform .25s;
+      flex-shrink: 0;
+    }
+    .filter-card.collapsed .chevron { transform: rotate(-90deg); }
+    .filter-card.collapsed .filter-card-body { display: none; }
+    .filter-card-body { padding: .75rem 0; }
+
+    /* search inside filter */
+    .filter-search {
+      margin: 0 1.25rem .75rem;
+      position: relative;
+    }
+    .filter-search input {
+      width: 100%;
+      padding: .4rem .75rem .4rem 2rem;
+      border: 1px solid var(--gray-300);
+      border-radius: 9999px;
+      font-size: .8rem;
+      font-family: inherit;
+      color: var(--gray-700);
+      background: var(--gray-50);
+      outline: none;
+      transition: border-color .2s, box-shadow .2s;
+    }
+    .filter-search input:focus {
+      border-color: var(--primary-blue);
+      box-shadow: 0 0 0 2px rgba(37,99,235,.1);
+      background: var(--white);
+    }
+    .filter-search svg {
+      position: absolute;
+      left: .65rem;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 13px;
+      height: 13px;
+      color: var(--gray-500);
+      pointer-events: none;
+    }
+
+    .filter-list {
+      max-height: 220px;
+      overflow-y: auto;
+      padding: 0 .5rem;
+    }
+    .filter-list::-webkit-scrollbar { width: 4px; }
+    .filter-list::-webkit-scrollbar-track { background: transparent; }
+    .filter-list::-webkit-scrollbar-thumb { background: var(--gray-300); border-radius: 4px; }
+
+    .filter-item {
+      display: flex;
+      align-items: center;
+      gap: .65rem;
+      padding: .45rem .75rem;
+      border-radius: .5rem;
+      cursor: pointer;
+      transition: background .15s;
+    }
+    .filter-item:hover { background: var(--gray-50); }
+    .filter-item input[type="checkbox"] { display: none; }
+
+    .checkbox-box {
+      width: 17px;
+      height: 17px;
+      flex-shrink: 0;
+      border: 2px solid var(--gray-300);
+      border-radius: 4px;
+      background: var(--white);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: border-color .15s, background .15s;
+    }
+    .filter-item input:checked ~ .checkbox-box {
+      border-color: var(--primary-blue);
+      background: var(--primary-blue);
+    }
+    .checkbox-box svg { display: none; width: 10px; height: 10px; stroke: #fff; stroke-width: 3; }
+    .filter-item input:checked ~ .checkbox-box svg { display: block; }
+
+    .filter-label {
+      font-size: .875rem;
+      color: var(--gray-700);
+      flex: 1;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      transition: color .15s;
+    }
+    .filter-item:has(input:checked) .filter-label {
+      color: var(--primary-blue);
+      font-weight: 600;
+    }
+
+    /* price range */
+    .price-range-wrap { padding: .5rem 1.25rem .75rem; }
+    .price-inputs {
+      display: flex;
+      align-items: center;
+      gap: .5rem;
+      margin-bottom: .75rem;
+    }
+   .price-inputs input {
+  flex: 1;
+  min-width: 0; 
+  width: 100%; 
+  
+  
+  padding: .45rem .65rem;
+  border: 1px solid var(--gray-300);
+  border-radius: .5rem;
+  font-size: .82rem;
+  font-family: inherit;
+  color: var(--gray-700);
+  outline: none;
+  text-align: center;
+  transition: border-color .2s;
+}
+    .price-inputs input:focus { border-color: var(--primary-blue); }
+    .price-inputs span { color: var(--gray-500); }
+
+    /* ════════════════════════════════════════════════
+       PRODUCTS AREA
+    ════════════════════════════════════════════════ */
+    .result-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 1.5rem;
+      flex-wrap: wrap;
+      gap: .75rem;
+    }
+    .result-count { font-size: .9rem; color: var(--gray-600); }
+    .result-count strong { color: var(--gray-900); }
+
+    .sort-select {
+      padding: .5rem 1rem;
+      border: 1px solid var(--gray-300);
+      border-radius: 9999px;
+      font-size: .875rem;
+      font-family: inherit;
+      color: var(--gray-700);
+      background: var(--white);
+      cursor: pointer;
+      outline: none;
+      transition: border-color .2s, box-shadow .2s;
+    }
+    .sort-select:focus {
+      border-color: var(--primary-blue);
+      box-shadow: 0 0 0 2px rgba(37,99,235,.1);
+    }
+
+    /* products grid */
+    .products-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.5rem;
+    }
+
+    /* product card */
+    .product-card {
+      background-color: var(--white);
+      border-radius: .75rem;
+      box-shadow: 0 1px 3px rgba(0,0,0,.1);
+      overflow: hidden;
+      transition: all .3s;
+      cursor: pointer;
+    }
+    .product-card:hover {
+      box-shadow: 0 10px 25px rgba(0,0,0,.1);
+      transform: translateY(-2px);
+    }
+
+    .product-image-wrapper {
+      position: relative;
+      overflow: hidden;
+      height: 16rem;
+    }
+    .product-image {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform .3s;
+    }
+    .product-card:hover .product-image { transform: scale(1.06); }
+
+    .product-badge {
+      position: absolute;
+      top: 1rem;
+      left: 1rem;
+      background-color: var(--red);
+      color: var(--white);
+      padding: .25rem .75rem;
+      border-radius: 9999px;
+      font-size: .875rem;
+      font-weight: 600;
+    }
+
+    .product-wishlist {
+      position: absolute;
+      top: 1rem;
+      right: 1rem;
+      background-color: var(--white);
+      border: none;
+      width: 2rem;
+      height: 2rem;
+      border-radius: 50%;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 1px 3px rgba(0,0,0,.1);
+      transition: all .3s;
+    }
+    .product-wishlist:hover { background-color: #fef2f2; }
+    .product-wishlist svg { width: 1.25rem; height: 1.25rem; color: var(--gray-600); }
+    .product-wishlist.active svg { fill: var(--red); stroke: var(--red); }
+
+    .product-info { padding: 1.25rem; }
+
+    .product-category {
+      font-size: .875rem;
+      color: var(--gray-500);
+      margin-bottom: .25rem;
+    }
+
+    .product-name {
+      font-weight: 600;
+      font-size: 1rem;
+      margin-bottom: .75rem;
+      color: var(--gray-800);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .product-footer {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      grid-template-rows: auto auto;
+      align-items: center;
+      gap: .1rem .5rem;
+      margin-top: .75rem;
+    }
+    .product-price {
+      grid-column: 1;
+      grid-row: 1;
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--primary-blue);
+      white-space: nowrap;
+    }
+    .original-price {
+      grid-column: 1;
+      grid-row: 2;
+      text-decoration: line-through;
+      color: var(--gray-500);
+      font-size: .8rem;
+      white-space: nowrap;
+    }
+    .product-btn {
+      grid-column: 2;
+      grid-row: 1 / 3;
+      align-self: center;
+      background-color: var(--primary-blue);
+      color: var(--white);
+      border: none;
+      padding: .5rem .85rem;
+      border-radius: 9999px;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: .8rem;
+      white-space: nowrap;
+      transition: all .3s;
+    }
+    .product-btn:hover { background-color: var(--primary-blue-dark); }
+
+    /* empty state */
+    .empty-state {
+      grid-column: 1/-1;
+      text-align: center;
+      padding: 4rem 2rem;
+      color: var(--gray-500);
+    }
+    .empty-state svg {
+      width: 52px;
+      height: 52px;
+      color: var(--gray-300);
+      margin: 0 auto 1rem;
+      display: block;
+    }
+    .empty-state h3 { font-size: 1.1rem; color: var(--gray-700); margin-bottom: .5rem; }
+
+    /* pagination */
+    .pagination {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: .4rem;
+      margin-top: 2.5rem;
+    }
+    .page-btn {
+      padding: .45rem .9rem;
+      border: 1px solid var(--gray-300);
+      border-radius: 9999px;
+      background: var(--white);
+      font-size: .875rem;
+      font-family: inherit;
+      color: var(--gray-700);
+      cursor: pointer;
+      text-decoration: none;
+      transition: all .2s;
+      display: inline-block;
+    }
+    .page-btn:hover { border-color: var(--primary-blue); color: var(--primary-blue); }
+    .page-btn.active {
+      background: var(--primary-blue);
+      border-color: var(--primary-blue);
+      color: var(--white);
+      font-weight: 600;
+    }
+    .page-btn.disabled { opacity: .45; pointer-events: none; }
+
+    /* ════════════════════════════════════════════════
+       TOAST
+    ════════════════════════════════════════════════ */
+    #toast-container {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      z-index: 9999;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .toast-msg {
+      min-width: 250px;
+      background-color: #333;
+      color: white;
+      padding: 15px 20px;
+      border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(0,0,0,.15);
+      font-size: 14px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      transform: translateX(120%);
+      animation: slideIn .3s forwards;
+      transition: opacity .3s ease-out;
+    }
+    .toast-success { background-color: #2ecc71; border-left: 5px solid #27ae60; }
+    .toast-error   { background-color: #e74c3c; border-left: 5px solid #c0392b; }
+    .toast-info    { background-color: #3498db; border-left: 5px solid #2980b9; }
+    @keyframes slideIn { to { transform: translateX(0); } }
+
+    /* ════════════════════════════════════════════════
+       RESPONSIVE
+    ════════════════════════════════════════════════ */
+    @media (max-width: 1024px) {
+      .products-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+
+    @media (max-width: 768px) {
+      .filter-page { grid-template-columns: 1fr; }
+
+      .sidebar {
+        position: fixed;
+        left: 0; top: 0; bottom: 0;
+        width: min(300px, 88vw);
+        background: var(--gray-50);
+        z-index: 100;
+        padding: 1.25rem 1rem;
+        overflow-y: auto;
+        transform: translateX(-110%);
+        transition: transform .3s;
+        box-shadow: 0 10px 25px rgba(0,0,0,.12);
+      }
+      .sidebar.open { transform: translateX(0); }
+      .sidebar-overlay.open { display: block; }
+
+      .mobile-row { display: flex; }
+      .mobile-filter-toggle { display: flex; }
+      .products-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+
+    @media (max-width: 480px) {
+      .products-grid { grid-template-columns: 1fr; }
+    }
+
+    /* btn dùng trong sidebar */
+    .btn {
+      padding: .75rem 2rem;
+      border-radius: 9999px;
+      font-weight: 600;
+      font-size: 1rem;
+      border: none;
+      cursor: pointer;
+      transition: all .3s;
+      text-decoration: none;
+      display: inline-block;
+      font-family: inherit;
+    }
+    .btn-primary {
+      background-color: var(--primary-blue);
+      color: var(--white);
+      box-shadow: 0 10px 25px rgba(37,99,235,.2);
+    }
+    .btn-primary:hover { background-color: var(--primary-blue-dark); }
+  </style>
+</head>
+<body>
+
+<!-- ══════════════════════ HEADER ══════════════════════ -->
+<header>
+  <div class="container">
+    <a href="/" class="logo">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <polyline points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polyline>
+      </svg>
+      <span>SportZone</span>
+    </a>
+
+    <nav>
+      <a href="/products">Tất cả sản phẩm</a>
+
+      <div class="nav-dropdown-wrapper">
+        <a href="#" style="display:flex;align-items:center;gap:.25rem;">
+          Danh mục
+          <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none"><polyline points="6 9 12 15 18 9"/></svg>
+        </a>
+        <div class="nav-dropdown">
+          <div th:if="${#lists.isEmpty(categories)}" style="padding:.5rem 1.5rem;color:#6b7280;font-size:.875rem;">Không có dữ liệu</div>
+          <a th:each="c : ${categories}" th:href="@{/filter(categoryId=${c.id})}" th:text="${c.name}">Danh mục</a>
+        </div>
+      </div>
+
+      <div class="nav-dropdown-wrapper">
+        <a href="#" style="display:flex;align-items:center;gap:.25rem;">
+          Môn thể thao
+          <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none"><polyline points="6 9 12 15 18 9"/></svg>
+        </a>
+        <div class="nav-dropdown">
+          <div th:if="${#lists.isEmpty(sports)}" style="padding:.5rem 1.5rem;color:#6b7280;font-size:.875rem;">Không có dữ liệu</div>
+          <a th:each="s : ${sports}" th:href="@{/filter(sportId=${s.id})}" th:text="${s.name}">Thể thao</a>
+        </div>
+      </div>
+
+      <div class="nav-dropdown-wrapper">
+        <a href="#" style="display:flex;align-items:center;gap:.25rem;">
+          Thương hiệu
+          <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none"><polyline points="6 9 12 15 18 9"/></svg>
+        </a>
+        <div class="nav-dropdown">
+          <div th:if="${#lists.isEmpty(brands)}" style="padding:.5rem 1.5rem;color:#6b7280;font-size:.875rem;">Không có dữ liệu</div>
+          <a th:each="b : ${brands}" th:href="@{/filter(brandId=${b.id})}" th:text="${b.name}">Thương hiệu</a>
+        </div>
+      </div>
+    </nav>
+
+    <div class="header-actions">
+      <div class="search-container">
+        <input type="text" class="search-input" placeholder="Tìm kiếm sản phẩm...">
+        <button class="icon-btn" title="Search">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+          </svg>
+        </button>
+      </div>
+
+      <button class="icon-btn" id="header-wishlist-btn" title="Wishlist">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+        </svg>
+      </button>
+
+      <div class="account-wrapper">
+        <button class="icon-btn" id="account-btn" th:data-logged-in="${session.currentUser != null}">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>
+          </svg>
+        </button>
+        <div id="account-dropdown" class="account-dropdown" th:if="${session.currentUser != null}">
+          <div class="dropdown-header">
+            <strong>Tài khoản</strong>
+            <div style="font-size:.85rem;color:#6b7280;margin-top:.25rem;" th:text="${session.currentUser.fullName}">Tên</div>
+          </div>
+          <a href="/profile">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+            Hồ sơ
+          </a>
+          <a href="/orders">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 10a4 4 0 0 1-8 0"/><path d="M3.103 6.034h17.794"/><path d="M3.4 5.467a2 2 0 0 0-.4 1.2V20a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6.667a2 2 0 0 0-.4-1.2l-2-2.667A2 2 0 0 0 17 2H7a2 2 0 0 0-1.6.8z"/></svg>
+            Đơn hàng
+          </a>
+          <a href="#" id="logout-btn">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+            Đăng xuất
+          </a>
+        </div>
+      </div>
+
+      <button class="icon-btn" id="cart-btn" title="Shopping Cart">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/>
+          <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/>
+        </svg>
+        <span class="cart-badge" id="cart-count" style="display:none;">0</span>
+      </button>
+    </div>
+  </div>
+</header>
+
+<!-- ══════════════════════ MAIN ══════════════════════ -->
+<main class="filter-page">
+
+  <!-- breadcrumb -->
+  <nav class="breadcrumb">
+    <a href="/">Trang chủ</a>
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+    <span>Lọc sản phẩm</span>
+  </nav>
+
+  <!-- active filter tags -->
+  <div class="active-filters" id="active-filters-bar"></div>
+
+  <!-- mobile row -->
+  <div class="mobile-row" id="mobile-row">
+    <button class="mobile-filter-toggle" id="mobile-toggle">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <line x1="4" y1="6" x2="20" y2="6"/>
+        <line x1="8" y1="12" x2="20" y2="12"/>
+        <line x1="12" y1="18" x2="20" y2="18"/>
+      </svg>
+      Bộ lọc
+    </button>
+    <select class="sort-select" onchange="onSortChange(this.value)">
+      <option value="newest"     th:selected="${sortBy == 'newest'}">Mới nhất</option>
+      <option value="price_asc"  th:selected="${sortBy == 'price_asc'}">Giá: thấp → cao</option>
+      <option value="price_desc" th:selected="${sortBy == 'price_desc'}">Giá: cao → thấp</option>
+      <option value="name_asc"   th:selected="${sortBy == 'name_asc'}">Tên A → Z</option>
+    </select>
+  </div>
+
+  <div class="sidebar-overlay" id="sidebar-overlay"></div>
+
+  <!-- ══════ SIDEBAR ══════ -->
+  <aside class="sidebar" id="sidebar">
+
+    <!-- DANH MỤC -->
+    <div class="filter-card" id="card-category">
+      <div class="filter-card-header" onclick="toggleCard('card-category')">
+        <h4>Danh mục</h4>
+        <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="18 15 12 9 6 15"/></svg>
+      </div>
+      <div class="filter-card-body">
+        <div class="filter-search">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+          <input type="text" placeholder="Tìm danh mục..." oninput="filterList('cat-list', this.value)">
+        </div>
+        <div class="filter-list" id="cat-list">
+          <label class="filter-item" th:each="c : ${categories}">
+            <input type="checkbox" name="categoryId" th:value="${c.id}"
+                   th:checked="${selectedCategoryIds != null and #lists.contains(selectedCategoryIds, c.id)}"
+                   onchange="onFilterChange()">
+            <span class="checkbox-box">
+              <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="3"><polyline points="1.5 6 4.5 9 10.5 3"/></svg>
+            </span>
+            <span class="filter-label" th:text="${c.name}">Danh mục</span>
+          </label>
+        </div>
+      </div>
+    </div>
+
+    <!-- MÔN THỂ THAO -->
+    <div class="filter-card" id="card-sport">
+      <div class="filter-card-header" onclick="toggleCard('card-sport')">
+        <h4>Môn thể thao</h4>
+        <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="18 15 12 9 6 15"/></svg>
+      </div>
+      <div class="filter-card-body">
+        <div class="filter-search">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+          <input type="text" placeholder="Tìm môn thể thao..." oninput="filterList('sport-list', this.value)">
+        </div>
+        <div class="filter-list" id="sport-list">
+          <label class="filter-item" th:each="s : ${sports}">
+            <input type="checkbox" name="sportId" th:value="${s.id}"
+                   th:checked="${selectedSportIds != null and #lists.contains(selectedSportIds, s.id)}"
+                   onchange="onFilterChange()">
+            <span class="checkbox-box">
+              <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="3"><polyline points="1.5 6 4.5 9 10.5 3"/></svg>
+            </span>
+            <span class="filter-label" th:text="${s.name}">Môn thể thao</span>
+          </label>
+        </div>
+      </div>
+    </div>
+
+    <!-- THƯƠNG HIỆU -->
+    <div class="filter-card" id="card-brand">
+      <div class="filter-card-header" onclick="toggleCard('card-brand')">
+        <h4>Thương hiệu</h4>
+        <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="18 15 12 9 6 15"/></svg>
+      </div>
+      <div class="filter-card-body">
+        <div class="filter-search">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+          <input type="text" placeholder="Tìm thương hiệu..." oninput="filterList('brand-list', this.value)">
+        </div>
+        <div class="filter-list" id="brand-list">
+          <label class="filter-item" th:each="b : ${brands}">
+            <input type="checkbox" name="brandId" th:value="${b.id}"
+                   th:checked="${selectedBrandIds != null and #lists.contains(selectedBrandIds, b.id)}"
+                   onchange="onFilterChange()">
+            <span class="checkbox-box">
+              <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="3"><polyline points="1.5 6 4.5 9 10.5 3"/></svg>
+            </span>
+            <span class="filter-label" th:text="${b.name}">Thương hiệu</span>
+          </label>
+        </div>
+      </div>
+    </div>
+
+    <!-- KHOẢNG GIÁ -->
+    <div class="filter-card" id="card-price">
+      <div class="filter-card-header" onclick="toggleCard('card-price')">
+        <h4>Khoảng giá</h4>
+        <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="18 15 12 9 6 15"/></svg>
+      </div>
+      <div class="filter-card-body">
+        <div class="price-range-wrap">
+          <div class="price-inputs">
+            <input type="text" id="price-min" placeholder="Từ" th:value="${minPrice != null ? minPrice : ''}">
+            <span>–</span>
+            <input type="text" id="price-max" placeholder="Đến" th:value="${maxPrice != null ? maxPrice : ''}">
+          </div>
+          <button class="btn btn-primary" style="width:100%;padding:.55rem;font-size:.85rem;"
+                  onclick="applyPriceFilter()">Áp dụng</button>
+        </div>
+      </div>
+    </div>
+
+  </aside>
+
+  <!-- ══════ PRODUCTS AREA ══════ -->
+  <div>
+    <div class="result-bar">
+      <p class="result-count">
+        Hiển thị
+        <strong th:text="${products != null ? #lists.size(products) : 0}">0</strong>
+        /
+        <strong th:text="${totalElements != null ? totalElements : 0}">0</strong>
+        sản phẩm
+      </p>
+      <select class="sort-select" id="sort-select" onchange="onSortChange(this.value)">
+        <option value="newest"     th:selected="${sortBy == 'newest'}">Mới nhất</option>
+        <option value="price_asc"  th:selected="${sortBy == 'price_asc'}">Giá: thấp → cao</option>
+        <option value="price_desc" th:selected="${sortBy == 'price_desc'}">Giá: cao → thấp</option>
+        <option value="name_asc"   th:selected="${sortBy == 'name_asc'}">Tên A → Z</option>
+      </select>
+    </div>
+
+    <div class="products-grid">
+
+      <div class="empty-state" th:if="${#lists.isEmpty(products)}">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+        </svg>
+        <h3>Không tìm thấy sản phẩm</h3>
+        <p>Hãy thử thay đổi bộ lọc hoặc tìm kiếm từ khoá khác</p>
+      </div>
+
+      <div class="product-card" th:each="product : ${products}"
+           th:onclick="|window.location.href='@{/product/{id}(id=${product.id})}'|">
+        <div class="product-image-wrapper">
+          <img th:src="${product.thumbnailUrl != null ? product.thumbnailUrl : 'https://images.pexels.com/photos/2529148/pexels-photo-2529148.jpeg?auto=compress&cs=tinysrgb&w=600'}"
+               th:alt="${product.name}" class="product-image">
+          <span class="product-badge"
+                th:if="${product.discountPercentage != null}"
+                th:text="${'-' + product.discountPercentage + '%'}"></span>
+          <button class="product-wishlist"
+                  th:classappend="${product.isWished} ? ' active' : ''"
+                  th:onclick="'event.stopPropagation(); addToWishlist(' + ${product.id} + ', this)'"
+                  title="Yêu thích">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                 th:style="${product.isWished} ? 'fill:#e74c3c;stroke:#e74c3c;' : ''">
+              <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+            </svg>
+          </button>
+        </div>
+        <div class="product-info">
+          <p class="product-category" th:text="${product.gender != null ? product.gender : 'Unisex'}">Unisex</p>
+          <h3 class="product-name" th:text="${product.name}">Tên sản phẩm</h3>
+          <div class="product-footer">
+            <span class="product-price"
+                  th:text="${product.salePrice != null
+                    ? #numbers.formatDecimal(product.salePrice,0,'COMMA',0,'POINT') + 'đ'
+                    : #numbers.formatDecimal(product.basePrice,0,'COMMA',0,'POINT') + 'đ'}">0đ</span>
+            <span class="original-price"
+                  th:if="${product.salePrice != null}"
+                  th:text="${#numbers.formatDecimal(product.basePrice,0,'COMMA',0,'POINT') + 'đ'}"></span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- pagination -->
+    <div th:if="${totalPages > 1}" class="pagination">
+      <a class="page-btn"
+         th:classappend="${currentPage == 0} ? ' disabled' : ''"
+         th:href="@{/filter(page=${currentPage-1},categoryId=${selectedCategoryIds},sportId=${selectedSportIds},brandId=${selectedBrandIds},sortBy=${sortBy},minPrice=${minPrice},maxPrice=${maxPrice})}">
+        ← Trước
+      </a>
+      <a class="page-btn"
+         th:each="i : ${#numbers.sequence(0, totalPages - 1)}"
+         th:classappend="${i == currentPage} ? ' active' : ''"
+         th:href="@{/filter(page=${i},categoryId=${selectedCategoryIds},sportId=${selectedSportIds},brandId=${selectedBrandIds},sortBy=${sortBy},minPrice=${minPrice},maxPrice=${maxPrice})}"
+         th:text="${i + 1}">1</a>
+      <a class="page-btn"
+         th:classappend="${currentPage >= totalPages - 1} ? ' disabled' : ''"
+         th:href="@{/filter(page=${currentPage+1},categoryId=${selectedCategoryIds},sportId=${selectedSportIds},brandId=${selectedBrandIds},sortBy=${sortBy},minPrice=${minPrice},maxPrice=${maxPrice})}">
+        Tiếp →
+      </a>
+    </div>
+  </div>
+
+</main>
+
+<!-- ══════════════════════ SCRIPTS ══════════════════════ -->
+<script>
+  function toggleCard(id) {
+    document.getElementById(id).classList.toggle('collapsed');
+  }
+
+  function filterList(listId, query) {
+    const q = query.toLowerCase();
+    document.querySelectorAll('#' + listId + ' .filter-item').forEach(item => {
+      item.style.display = item.querySelector('.filter-label').textContent.toLowerCase().includes(q) ? '' : 'none';
+    });
+  }
+
+  function buildFilterUrl(overrides = {}) {
+    const params = new URLSearchParams();
+    const vals = name => [...document.querySelectorAll(`input[name="${name}"]:checked`)].map(el => el.value);
+
+    (overrides.categoryId ?? vals('categoryId')).forEach(v => params.append('categoryId', v));
+    (overrides.sportId    ?? vals('sportId')).forEach(v    => params.append('sportId', v));
+    (overrides.brandId    ?? vals('brandId')).forEach(v    => params.append('brandId', v));
+
+    const sortBy   = overrides.sortBy   ?? document.getElementById('sort-select')?.value;
+    const page     = overrides.page     ?? 0;
+    const minPrice = overrides.minPrice ?? document.getElementById('price-min').value.trim();
+    const maxPrice = overrides.maxPrice ?? document.getElementById('price-max').value.trim();
+
+    if (sortBy)   params.set('sortBy', sortBy);
+    if (page > 0) params.set('page', page);
+    if (minPrice) params.set('minPrice', minPrice);
+    if (maxPrice) params.set('maxPrice', maxPrice);
+
+    return '/filter?' + params.toString();
+  }
+
+  function onFilterChange()   { window.location.href = buildFilterUrl(); }
+  function onSortChange(val)  { window.location.href = buildFilterUrl({ sortBy: val }); }
+  function applyPriceFilter() { window.location.href = buildFilterUrl(); }
+
+  function renderActiveTags() {
+    const bar = document.getElementById('active-filters-bar');
+    bar.innerHTML = '';
+    const checked = document.querySelectorAll('input[type="checkbox"]:checked');
+    if (!checked.length) return;
+
+    checked.forEach(input => {
+      const label = input.closest('.filter-item').querySelector('.filter-label').textContent.trim();
+      const tag   = document.createElement('span');
+      tag.className = 'active-tag';
+      tag.innerHTML = `${label}<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>`;
+      tag.onclick = () => { input.checked = false; onFilterChange(); };
+      bar.appendChild(tag);
+    });
+
+    const btn = document.createElement('button');
+    btn.className = 'clear-all-btn';
+    btn.textContent = 'Xóa tất cả';
+    btn.onclick = () => {
+      document.querySelectorAll('input[type="checkbox"]:checked').forEach(el => el.checked = false);
+      onFilterChange();
+    };
+    bar.appendChild(btn);
+  }
+
+  /* mobile sidebar */
+  const sidebar = document.getElementById('sidebar');
+  const overlay = document.getElementById('sidebar-overlay');
+
+  document.getElementById('mobile-toggle').addEventListener('click', () => {
+    sidebar.classList.add('open');
+    overlay.classList.add('open');
+  });
+  overlay.addEventListener('click', () => {
+    sidebar.classList.remove('open');
+    overlay.classList.remove('open');
+  });
+
+  document.addEventListener('DOMContentLoaded', () => {
+    renderActiveTags();
+
+    /* account dropdown */
+    const accountBtn = document.getElementById('account-btn');
+    accountBtn?.addEventListener('click', e => {
+      e.stopPropagation();
+      if (sessionStorage.getItem('currentUser')) {
+        document.getElementById('account-dropdown')?.classList.toggle('active');
+      } else {
+        window.location.href = '/login';
+      }
+    });
+    document.addEventListener('click', event => {
+      const menu = document.getElementById('account-dropdown');
+      if (menu?.classList.contains('active') && !menu.contains(event.target) && !accountBtn.contains(event.target))
+        menu.classList.remove('active');
+    });
+
+    document.getElementById('header-wishlist-btn')?.addEventListener('click', e => {
+      e.preventDefault();
+      try {
+        const userId = JSON.parse(sessionStorage.getItem('currentUser')).id;
+        window.location.href = '/wishlist/list?userId=' + userId;
+      } catch {
+        showToast('Vui lòng đăng nhập để xem danh sách yêu thích', 'error');
+        setTimeout(() => window.location.href = '/login', 1500);
+      }
+    });
+
+    document.getElementById('logout-btn')?.addEventListener('click', async e => {
+      e.preventDefault();
+      try {
+        const res  = await fetch('/logout', { method: 'POST', headers: {'Content-Type':'application/json'} });
+        const data = await res.json();
+        if (data.status === 'SUCCESS') {
+          sessionStorage.removeItem('currentUser');
+          showToast('Đăng xuất thành công, quay về trang chủ', 'success');
+          setTimeout(() => window.location.href = '/', 1500);
+        } else { showToast(data.message, 'error'); }
+      } catch { showToast('Lỗi kết nối khi đăng xuất', 'error'); }
+    });
+  });
+
+  function showToast(message, type = 'info') {
+    let container = document.getElementById('toast-container');
+    if (!container) {
+      container = document.createElement('div');
+      container.id = 'toast-container';
+      document.body.appendChild(container);
+    }
+    const toast = document.createElement('div');
+    toast.className = `toast-msg toast-${type}`;
+    toast.innerText = message;
+    container.appendChild(toast);
+    setTimeout(() => {
+      toast.style.opacity = '0';
+      setTimeout(() => toast.parentNode?.removeChild(toast), 300);
+    }, 3000);
+  }
+
+  function checkLogin() {
+    if (!sessionStorage.getItem('currentUser')) {
+      showToast('Vui lòng đăng nhập để thực hiện thao tác này', 'error');
+      setTimeout(() => window.location.href = '/login', 1500);
+      return false;
+    }
+    return true;
+  }
+
+  async function addToWishlist(productId, btnElement) {
+    const svgIcon = btnElement.querySelector('svg');
+    const isWished = btnElement.classList.toggle('active');
+    let userId;
+    try { userId = JSON.parse(sessionStorage.getItem('currentUser')).id; }
+    catch {
+      showToast('Vui lòng đăng nhập để thao tác với wishlist', 'error');
+      setTimeout(() => window.location.href = '/login', 1500);
+      return;
+    }
+    svgIcon.style.fill   = isWished ? '#e74c3c' : 'none';
+    svgIcon.style.stroke = isWished ? '#e74c3c' : 'currentColor';
+    const endpoint = isWished ? '/wishlist/add' : '/wishlist/remove';
+    const res  = await fetch(endpoint, { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({userId, productId}) });
+    const data = await res.json();
+    showToast(data.status === 'SUCCESS' ? (isWished ? 'Đã thêm vào wishlist' : 'Đã xóa khỏi wishlist') : (data.message || 'Lỗi'), data.status === 'SUCCESS' ? 'success' : 'error');
+  }
+
+  
+</script>
+</body>
+</html>

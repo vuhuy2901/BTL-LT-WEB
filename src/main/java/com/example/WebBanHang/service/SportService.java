@@ -25,6 +25,12 @@ public class SportService {
                 new ApiResponse<>("ERROR", "Tên môn thể thao không được để trống", null)
             );
         }
+        String name = sport.getName().trim() ;
+        if (repo.findByName(name) != null) {
+            return ResponseEntity.badRequest().body(
+                new ApiResponse<>("ERROR", "Tên môn thể thao đã tồn tại", null)
+            );
+        } 
         sport.setCreateAt(LocalDateTime.now()); 
         repo.save(sport);
         return ResponseEntity.ok().body(

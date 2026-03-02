@@ -1,5 +1,7 @@
 package com.example.WebBanHang.dto;
 
+import java.time.LocalDateTime;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -13,7 +15,11 @@ public class ProductSummaryDto {
     private Integer id;
     private String name;
     private String thumbnailUrl;
-    private Double basePrice;
-    private Double salePrice;
+    private Long basePrice;
+    private Long salePrice;
     private String gender;   
+    private LocalDateTime saleStart;
+     private LocalDateTime saleEnd;
+    private Integer discountPercentage; 
+    private Boolean isWished;
 }

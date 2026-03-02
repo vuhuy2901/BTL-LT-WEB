@@ -604,7 +604,7 @@
 .product-price {
   grid-column: 1;
   grid-row: 1;
-  font-size: 1rem;
+  font-size: 1.4rem;
   font-weight: 700;
   color: var(--primary-blue);
   white-space: nowrap;
@@ -838,17 +838,9 @@
         width: 1.25rem;
         height: 1.25rem;
       }
-      .price-container {
-      display: flex;
-      align-items: center; /* Căn giữa theo chiều dọc */
-      gap: 8px; /* Khoảng cách giữa giá sale và giá gốc */
-  }
+      
 
-  .product-price {
-      font-weight: bold;
-      color: #e74c3c; /* Tùy chỉnh màu sắc nổi bật cho giá đang bán */
-      font-size: 1.1em;
-  }
+  
 
   .original-price {
       text-decoration: line-through; /* Dòng này tạo hiệu ứng gạch ngang */

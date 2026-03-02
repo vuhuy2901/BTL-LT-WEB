@@ -29,7 +29,7 @@
             </a>
             <div class="nav-dropdown">
               <div th:if="${#lists.isEmpty(categories)}" style="padding: 0.5rem 1.5rem; color: #6b7280; font-size: 0.875rem;">Không có dữ liệu</div>
-              <a th:each="c : ${categories}" th:href="@{/category/{id}(id=${c.id})}" th:text="${c.name}">Danh mục 1</a>
+              <a th:each="c : ${categories}" th:href="@{/filter(categoryId=${c.id})}" th:text="${c.name}">Danh mục 1</a>
             </div>
           </div>
 
@@ -40,7 +40,7 @@
             </a>
             <div class="nav-dropdown">
               <div th:if="${#lists.isEmpty(sports)}" style="padding: 0.5rem 1.5rem; color: #6b7280; font-size: 0.875rem;">Không có dữ liệu</div>
-              <a th:each="s : ${sports}" th:href="@{/sport/{id}(id=${s.id})}" th:text="${s.name}">Thể thao 1</a>
+              <a th:each="s : ${sports}" th:href="@{/filter(sportId=${s.id})}" th:text="${s.name}">Thể thao 1</a>
             </div>
           </div>
 
@@ -52,7 +52,7 @@
             </a>
             <div class="nav-dropdown">
               <div th:if="${#lists.isEmpty(brands)}" style="padding: 0.5rem 1.5rem; color: #6b7280; font-size: 0.875rem;">Không có dữ liệu</div>
-              <a th:each="b : ${brands}" th:href="@{/brand/{id}(id=${b.id})}" th:text="${b.name}">Thương hiệu 1</a>
+              <a th:each="b : ${brands}" th:href="@{/filter(brandId=${b.id})}" th:text="${b.name}">Thương hiệu 1</a>
             </div>
           </div>
 
@@ -179,7 +179,7 @@
                       th:text="${#numbers.formatDecimal(product.basePrice, 0, 'COMMA', 0, 'POINT') + 'đ'}">
                   0đ
                 </span>
-                <button class="product-btn" th:onclick="|event.stopPropagation(); addToCart(${product.id})|">Add to Cart</button>
+                
               </div>
             </div>
           </div>
@@ -403,15 +403,13 @@
       toast.className = `toast-msg toast-${type}`;
       toast.innerText = message;
 
-      // Thêm vào container
       container.appendChild(toast);
 
-      // Tự động ẩn và xóa sau 3 giây
       setTimeout(() => {
-        toast.style.opacity = '0'; // Làm mờ
+        toast.style.opacity = '0'; 
         setTimeout(() => {
           if (toast.parentNode) {
-            toast.parentNode.removeChild(toast); // Xóa khỏi DOM
+            toast.parentNode.removeChild(toast); 
           }
         }, 300); // Đợi làm mờ xong rồi xóa
       }, 3000);
