@@ -4,233 +4,11 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Lọc sản phẩm - SportZone</title>
+    <link rel="stylesheet" href="/css/client/base.css">
+  <link rel="stylesheet" href="/css/client/header.css">
+  <link rel="stylesheet" href="/css/client/footer.css">
+  <link rel="stylesheet" href="/css/client/toast.css">
   <style>
-    /* ════════════════════════════════════════════════
-       RESET & BASE
-    ════════════════════════════════════════════════ */
-    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
-
-    :root {
-      --primary-blue: #2563eb;
-      --primary-blue-dark: #1d4ed8;
-      --primary-cyan: #06b6d4;
-      --gray-900: #111827;
-      --gray-800: #1f2937;
-      --gray-700: #374151;
-      --gray-600: #4b5563;
-      --gray-500: #6b7280;
-      --gray-400: #9ca3af;
-      --gray-300: #d1d5db;
-      --gray-200: #e5e7eb;
-      --gray-100: #f3f4f6;
-      --gray-50:  #f9fafb;
-      --white:    #ffffff;
-      --red:      #e74c3c;
-      --red-dark: #c0392b;
-    }
-
-    html { scroll-behavior: smooth; }
-
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', sans-serif;
-      color: var(--gray-700);
-      background-color: var(--gray-50);
-      line-height: 1.6;
-    }
-
-    /* ════════════════════════════════════════════════
-       HEADER
-    ════════════════════════════════════════════════ */
-    header {
-      position: sticky;
-      top: 0;
-      z-index: 50;
-      background-color: var(--white);
-      box-shadow: 0 1px 3px rgba(0,0,0,.1);
-    }
-
-    header .container {
-      max-width: 1200px;
-      margin: 0 auto;
-      padding: 1rem;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-    }
-
-    .logo {
-      display: flex;
-      align-items: center;
-      gap: .5rem;
-      font-size: 1.5rem;
-      font-weight: bold;
-      background: linear-gradient(to right, var(--primary-blue), var(--primary-cyan));
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-      text-decoration: none;
-    }
-    .logo svg { width: 2rem; height: 2rem; color: var(--primary-blue); }
-
-    nav {
-      display: none;
-      gap: 2rem;
-    }
-    nav a {
-      color: var(--gray-700);
-      text-decoration: none;
-      font-weight: 500;
-      transition: color .3s;
-    }
-    nav a:hover { color: var(--primary-blue); }
-
-    @media (min-width: 768px) { nav { display: flex; } }
-
-    /* nav dropdown */
-    .nav-dropdown-wrapper { position: relative; display: inline-block; }
-    .nav-dropdown {
-      position: absolute;
-      top: 100%;
-      left: 0;
-      background-color: var(--white);
-      box-shadow: 0 10px 25px rgba(0,0,0,.1);
-      border-radius: .5rem;
-      min-width: 200px;
-      opacity: 0;
-      visibility: hidden;
-      transform: translateY(10px);
-      transition: all .3s ease;
-      z-index: 50;
-      padding: .5rem 0;
-      border: 1px solid var(--gray-200);
-    }
-    .nav-dropdown-wrapper:hover .nav-dropdown {
-      opacity: 1;
-      visibility: visible;
-      transform: translateY(0);
-    }
-    .nav-dropdown a {
-      display: block;
-      padding: .75rem 1.5rem;
-      color: var(--gray-700);
-      text-decoration: none;
-      transition: background-color .2s;
-    }
-    .nav-dropdown a:hover {
-      background-color: var(--gray-50);
-      color: var(--primary-blue);
-    }
-
-    /* header actions */
-    .header-actions {
-      display: flex;
-      align-items: center;
-      gap: 1rem;
-    }
-
-    .search-container {
-      display: flex;
-      align-items: center;
-      background-color: var(--gray-50);
-      border: 1px solid var(--gray-200);
-      border-radius: 9999px;
-      padding-left: 1rem;
-      transition: all .3s ease;
-    }
-    .search-container:focus-within {
-      border-color: var(--primary-blue);
-      box-shadow: 0 0 0 2px rgba(37,99,235,.1);
-    }
-    .search-input {
-      border: none;
-      background: transparent;
-      outline: none;
-      font-size: .9rem;
-      width: 140px;
-      color: var(--gray-800);
-      transition: width .3s ease;
-    }
-    .search-input:focus { width: 200px; }
-    .search-container .icon-btn { background: transparent; }
-
-    @media (max-width: 767px) {
-      .search-input { display: none; }
-      .search-container { border: none; background: transparent; padding-left: 0; }
-    }
-
-    .icon-btn {
-      background: none;
-      border: none;
-      cursor: pointer;
-      padding: .5rem;
-      border-radius: 50%;
-      transition: background-color .3s;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      position: relative;
-    }
-    .icon-btn:hover { background-color: var(--gray-100); }
-    .icon-btn svg { width: 1.25rem; height: 1.25rem; color: var(--gray-700); }
-
-    .cart-badge {
-      position: absolute;
-      top: -.25rem;
-      right: -.25rem;
-      background-color: var(--primary-blue);
-      color: var(--white);
-      font-size: .75rem;
-      border-radius: 50%;
-      width: 1.25rem;
-      height: 1.25rem;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-weight: bold;
-    }
-
-    /* account dropdown */
-    .account-wrapper { position: relative; }
-    .account-dropdown {
-      position: absolute;
-      top: calc(100% + 10px);
-      right: 0;
-      background-color: var(--white);
-      border-radius: .5rem;
-      box-shadow: 0 10px 25px rgba(0,0,0,.1);
-      width: 180px;
-      opacity: 0;
-      visibility: hidden;
-      transform: translateY(-10px);
-      transition: all .3s ease;
-      z-index: 50;
-      border: 1px solid var(--gray-200);
-    }
-    .account-dropdown.active {
-      opacity: 1;
-      visibility: visible;
-      transform: translateY(0);
-    }
-    .account-dropdown .dropdown-header {
-      padding: 1rem;
-      border-bottom: 1px solid var(--gray-200);
-      color: var(--gray-800);
-    }
-    .account-dropdown a {
-      display: flex;
-      align-items: center;
-      gap: .75rem;
-      padding: .75rem 1rem;
-      color: var(--gray-700);
-      text-decoration: none;
-      transition: background-color .2s;
-    }
-    .account-dropdown a:hover {
-      background-color: var(--gray-50);
-      color: var(--primary-blue);
-    }
-    .account-dropdown a svg { width: 1.25rem; height: 1.25rem; }
-
     /* ════════════════════════════════════════════════
        FILTER PAGE LAYOUT
     ════════════════════════════════════════════════ */
@@ -611,7 +389,7 @@
     .product-price {
       grid-column: 1;
       grid-row: 1;
-      font-size: 1rem;
+      font-size: 1.3rem;  
       font-weight: 700;
       color: var(--primary-blue);
       white-space: nowrap;
@@ -688,38 +466,6 @@
     .page-btn.disabled { opacity: .45; pointer-events: none; }
 
     /* ════════════════════════════════════════════════
-       TOAST
-    ════════════════════════════════════════════════ */
-    #toast-container {
-      position: fixed;
-      top: 20px;
-      right: 20px;
-      z-index: 9999;
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-    }
-    .toast-msg {
-      min-width: 250px;
-      background-color: #333;
-      color: white;
-      padding: 15px 20px;
-      border-radius: 8px;
-      box-shadow: 0 4px 12px rgba(0,0,0,.15);
-      font-size: 14px;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      transform: translateX(120%);
-      animation: slideIn .3s forwards;
-      transition: opacity .3s ease-out;
-    }
-    .toast-success { background-color: #2ecc71; border-left: 5px solid #27ae60; }
-    .toast-error   { background-color: #e74c3c; border-left: 5px solid #c0392b; }
-    .toast-info    { background-color: #3498db; border-left: 5px solid #2980b9; }
-    @keyframes slideIn { to { transform: translateX(0); } }
-
-    /* ════════════════════════════════════════════════
        RESPONSIVE
     ════════════════════════════════════════════════ */
     @media (max-width: 1024px) {
@@ -753,128 +499,13 @@
       .products-grid { grid-template-columns: 1fr; }
     }
 
-    /* btn dùng trong sidebar */
-    .btn {
-      padding: .75rem 2rem;
-      border-radius: 9999px;
-      font-weight: 600;
-      font-size: 1rem;
-      border: none;
-      cursor: pointer;
-      transition: all .3s;
-      text-decoration: none;
-      display: inline-block;
-      font-family: inherit;
-    }
-    .btn-primary {
-      background-color: var(--primary-blue);
-      color: var(--white);
-      box-shadow: 0 10px 25px rgba(37,99,235,.2);
-    }
-    .btn-primary:hover { background-color: var(--primary-blue-dark); }
+    
   </style>
 </head>
 <body>
 
 <!-- ══════════════════════ HEADER ══════════════════════ -->
-<header>
-  <div class="container">
-    <a href="/" class="logo">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-        <polyline points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polyline>
-      </svg>
-      <span>SportZone</span>
-    </a>
-
-    <nav>
-      <a href="/products">Tất cả sản phẩm</a>
-
-      <div class="nav-dropdown-wrapper">
-        <a href="#" style="display:flex;align-items:center;gap:.25rem;">
-          Danh mục
-          <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none"><polyline points="6 9 12 15 18 9"/></svg>
-        </a>
-        <div class="nav-dropdown">
-          <div th:if="${#lists.isEmpty(categories)}" style="padding:.5rem 1.5rem;color:#6b7280;font-size:.875rem;">Không có dữ liệu</div>
-          <a th:each="c : ${categories}" th:href="@{/filter(categoryId=${c.id})}" th:text="${c.name}">Danh mục</a>
-        </div>
-      </div>
-
-      <div class="nav-dropdown-wrapper">
-        <a href="#" style="display:flex;align-items:center;gap:.25rem;">
-          Môn thể thao
-          <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none"><polyline points="6 9 12 15 18 9"/></svg>
-        </a>
-        <div class="nav-dropdown">
-          <div th:if="${#lists.isEmpty(sports)}" style="padding:.5rem 1.5rem;color:#6b7280;font-size:.875rem;">Không có dữ liệu</div>
-          <a th:each="s : ${sports}" th:href="@{/filter(sportId=${s.id})}" th:text="${s.name}">Thể thao</a>
-        </div>
-      </div>
-
-      <div class="nav-dropdown-wrapper">
-        <a href="#" style="display:flex;align-items:center;gap:.25rem;">
-          Thương hiệu
-          <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none"><polyline points="6 9 12 15 18 9"/></svg>
-        </a>
-        <div class="nav-dropdown">
-          <div th:if="${#lists.isEmpty(brands)}" style="padding:.5rem 1.5rem;color:#6b7280;font-size:.875rem;">Không có dữ liệu</div>
-          <a th:each="b : ${brands}" th:href="@{/filter(brandId=${b.id})}" th:text="${b.name}">Thương hiệu</a>
-        </div>
-      </div>
-    </nav>
-
-    <div class="header-actions">
-      <div class="search-container">
-        <input type="text" class="search-input" placeholder="Tìm kiếm sản phẩm...">
-        <button class="icon-btn" title="Search">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
-          </svg>
-        </button>
-      </div>
-
-      <button class="icon-btn" id="header-wishlist-btn" title="Wishlist">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
-        </svg>
-      </button>
-
-      <div class="account-wrapper">
-        <button class="icon-btn" id="account-btn" th:data-logged-in="${session.currentUser != null}">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>
-          </svg>
-        </button>
-        <div id="account-dropdown" class="account-dropdown" th:if="${session.currentUser != null}">
-          <div class="dropdown-header">
-            <strong>Tài khoản</strong>
-            <div style="font-size:.85rem;color:#6b7280;margin-top:.25rem;" th:text="${session.currentUser.fullName}">Tên</div>
-          </div>
-          <a href="/profile">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-            Hồ sơ
-          </a>
-          <a href="/orders">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 10a4 4 0 0 1-8 0"/><path d="M3.103 6.034h17.794"/><path d="M3.4 5.467a2 2 0 0 0-.4 1.2V20a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6.667a2 2 0 0 0-.4-1.2l-2-2.667A2 2 0 0 0 17 2H7a2 2 0 0 0-1.6.8z"/></svg>
-            Đơn hàng
-          </a>
-          <a href="#" id="logout-btn">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
-            Đăng xuất
-          </a>
-        </div>
-      </div>
-
-      <button class="icon-btn" id="cart-btn" title="Shopping Cart">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/>
-          <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/>
-        </svg>
-        <span class="cart-badge" id="cart-count" style="display:none;">0</span>
-      </button>
-    </div>
-  </div>
-</header>
+<div th:replace="~{client/fragments/header :: header_fragment}"></div>
 
 <!-- ══════════════════════ MAIN ══════════════════════ -->
 <main class="filter-page">
@@ -1007,8 +638,6 @@
     </div>
 
   </aside>
-
-  <!-- ══════ PRODUCTS AREA ══════ -->
   <div>
     <div class="result-bar">
       <p class="result-count">
@@ -1093,6 +722,10 @@
 
 </main>
 
+<!-- ══════════════════════ FOOTER ══════════════════════ -->
+<div th:replace="~{client/fragments/footer :: footer_fragment}"></div>
+
+
 <!-- ══════════════════════ SCRIPTS ══════════════════════ -->
 <script>
   function toggleCard(id) {
@@ -1171,64 +804,9 @@
 
   document.addEventListener('DOMContentLoaded', () => {
     renderActiveTags();
-
-    /* account dropdown */
-    const accountBtn = document.getElementById('account-btn');
-    accountBtn?.addEventListener('click', e => {
-      e.stopPropagation();
-      if (sessionStorage.getItem('currentUser')) {
-        document.getElementById('account-dropdown')?.classList.toggle('active');
-      } else {
-        window.location.href = '/login';
-      }
-    });
-    document.addEventListener('click', event => {
-      const menu = document.getElementById('account-dropdown');
-      if (menu?.classList.contains('active') && !menu.contains(event.target) && !accountBtn.contains(event.target))
-        menu.classList.remove('active');
-    });
-
-    document.getElementById('header-wishlist-btn')?.addEventListener('click', e => {
-      e.preventDefault();
-      try {
-        const userId = JSON.parse(sessionStorage.getItem('currentUser')).id;
-        window.location.href = '/wishlist/list?userId=' + userId;
-      } catch {
-        showToast('Vui lòng đăng nhập để xem danh sách yêu thích', 'error');
-        setTimeout(() => window.location.href = '/login', 1500);
-      }
-    });
-
-    document.getElementById('logout-btn')?.addEventListener('click', async e => {
-      e.preventDefault();
-      try {
-        const res  = await fetch('/logout', { method: 'POST', headers: {'Content-Type':'application/json'} });
-        const data = await res.json();
-        if (data.status === 'SUCCESS') {
-          sessionStorage.removeItem('currentUser');
-          showToast('Đăng xuất thành công, quay về trang chủ', 'success');
-          setTimeout(() => window.location.href = '/', 1500);
-        } else { showToast(data.message, 'error'); }
-      } catch { showToast('Lỗi kết nối khi đăng xuất', 'error'); }
-    });
   });
 
-  function showToast(message, type = 'info') {
-    let container = document.getElementById('toast-container');
-    if (!container) {
-      container = document.createElement('div');
-      container.id = 'toast-container';
-      document.body.appendChild(container);
-    }
-    const toast = document.createElement('div');
-    toast.className = `toast-msg toast-${type}`;
-    toast.innerText = message;
-    container.appendChild(toast);
-    setTimeout(() => {
-      toast.style.opacity = '0';
-      setTimeout(() => toast.parentNode?.removeChild(toast), 300);
-    }, 3000);
-  }
+
 
   function checkLogin() {
     if (!sessionStorage.getItem('currentUser')) {

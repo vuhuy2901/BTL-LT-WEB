@@ -1,6 +1,7 @@
 package com.example.WebBanHang.service;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 import org.jspecify.annotations.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,8 +29,10 @@ public class WishListService {
         return wishListRepository.findProductIdsByUserId(userId);
     }
 
-    public @Nullable Object listWishList(Integer userId) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'listWishList'");
+    public List<WishList> listWishList(Integer userId) {
+        return wishListRepository.findByUserId(userId);
+    }
+    public void clearWishList(Integer userId) {
+        wishListRepository.deleteByUserId(userId);
     }
 }

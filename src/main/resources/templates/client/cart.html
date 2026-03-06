@@ -1,0 +1,773 @@
+<!doctype html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Giỏ hàng - SportZone</title>
+    <link rel="stylesheet" href="/css/client/base.css">
+    <link rel="stylesheet" href="/css/client/header.css">
+    <link rel="stylesheet" href="/css/client/footer.css">
+    <link rel="stylesheet" href="/css/client/toast.css">
+    <style>
+        /* ── Page Layout ── */
+        .cart-page {
+            min-height: 70vh;
+            background: #f8fafc;
+            padding: 2.5rem 0 4rem;
+        }
+
+        .container {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 0 1.5rem;
+        }
+
+        /* ── Page Header ── */
+        .cart-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .cart-header-left {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .cart-header h1 {
+            font-size: 1.875rem;
+            font-weight: 700;
+            color: #111827;
+            margin: 0;
+        }
+
+        .cart-count-badge {
+            background: #2563eb;
+            color: #fff;
+            font-size: 0.8rem;
+            font-weight: 700;
+            padding: 0.25rem 0.65rem;
+            border-radius: 999px;
+            line-height: 1;
+        }
+
+        /* ── Empty State ── */
+        .cart-empty {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 6rem 2rem;
+            text-align: center;
+            background: #fff;
+            border-radius: 16px;
+            border: 2px dashed #e5e7eb;
+        }
+
+        .cart-empty svg {
+            width: 72px;
+            height: 72px;
+            color: #d1d5db;
+            margin-bottom: 1.25rem;
+            animation: float-cart 2.5s ease-in-out infinite;
+        }
+
+        @keyframes float-cart {
+            0%, 100% { transform: translateY(0); }
+            50%       { transform: translateY(-8px); }
+        }
+
+        .cart-empty h2 {
+            font-size: 1.375rem;
+            font-weight: 700;
+            color: #374151;
+            margin: 0 0 0.5rem;
+        }
+
+        .cart-empty p {
+            font-size: 0.95rem;
+            color: #9ca3af;
+            margin: 0 0 1.75rem;
+        }
+
+        .btn-shop-now {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: #2563eb;
+            color: #fff;
+            font-size: 0.95rem;
+            font-weight: 600;
+            padding: 0.75rem 1.75rem;
+            border-radius: 10px;
+            text-decoration: none;
+            border: none;
+            cursor: pointer;
+            transition: background 0.2s, transform 0.15s;
+        }
+
+        .btn-shop-now:hover {
+            background: #1d4ed8;
+            transform: translateY(-1px);
+        }
+
+        /* ── Cart Layout ── */
+        .cart-layout {
+            display: grid;
+            grid-template-columns: 1fr 360px;
+            gap: 2rem;
+            align-items: start;
+        }
+
+        @media (max-width: 900px) {
+            .cart-layout { grid-template-columns: 1fr; }
+        }
+
+        /* ── Cart Items ── */
+        .cart-items-box {
+            background: #fff;
+            border-radius: 16px;
+            border: 1px solid #f1f5f9;
+            box-shadow: 0 1px 4px rgba(0,0,0,.06);
+            overflow: hidden;
+        }
+
+        /* ── Checkbox ── */
+        .cart-cb {
+            width: 18px;
+            height: 18px;
+            accent-color: #2563eb;
+            cursor: pointer;
+            flex-shrink: 0;
+        }
+
+        .cart-items-header {
+            display: grid;
+            grid-template-columns: 36px 2fr 1fr 1fr 1fr auto;
+            gap: 1rem;
+            padding: 0.9rem 1.5rem;
+            background: #f8fafc;
+            border-bottom: 1px solid #e5e7eb;
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: .06em;
+            color: #6b7280;
+            align-items: center;
+        }
+
+        .cart-item {
+            display: grid;
+            grid-template-columns: 36px 2fr 1fr 1fr 1fr auto;
+            gap: 1rem;
+            align-items: center;
+            padding: 1.25rem 1.5rem;
+            border-bottom: 1px solid #f1f5f9;
+            transition: background 0.15s;
+        }
+
+        .cart-item.unchecked {
+            opacity: 0.8;
+        }
+
+        .cart-item:last-child { border-bottom: none; }
+        .cart-item:hover { background: #fafbfc; }
+
+        /* Product info column */
+        .cart-item-product {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .cart-item-img {
+            width: 72px;
+            height: 72px;
+            border-radius: 10px;
+            object-fit: cover;
+            background: #f1f5f9;
+            flex-shrink: 0;
+            border: 1px solid #e5e7eb;
+        }
+
+        .cart-item-img-placeholder {
+            width: 72px;
+            height: 72px;
+            border-radius: 10px;
+            background: linear-gradient(135deg, #e0e7ff 0%, #f1f5f9 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            border: 1px solid #e5e7eb;
+        }
+
+        .cart-item-img-placeholder svg {
+            width: 32px;
+            height: 32px;
+            stroke: #a5b4fc;
+        }
+
+        .cart-item-details h3 {
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: #111827;
+            margin: 0 0 0.25rem;
+        }
+
+        .cart-item-meta {
+            font-size: 0.78rem;
+            color: #9ca3af;
+            display: flex;
+            flex-direction: column;
+            gap: 0.1rem;
+        }
+
+        .cart-item-meta span {
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+        }
+
+        /* Variant / price columns */
+        .cart-item-variant,
+        .cart-item-price,
+        .cart-item-subtotal {
+            font-size: 0.9rem;
+            color: #374151;
+        }
+
+        .cart-item-price { font-weight: 500; }
+
+        .cart-item-subtotal {
+            font-weight: 700;
+            color: #111827;
+        }
+
+        /* ── Quantity control ── */
+        .qty-control {
+            display: flex;
+            align-items: center;
+            gap: 0;
+            border: 1.5px solid #e5e7eb;
+            border-radius: 8px;
+            overflow: hidden;
+            width: fit-content;
+        }
+
+        .qty-btn {
+            width: 32px;
+            height: 32px;
+            background: #f8fafc;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #374151;
+            transition: background 0.15s;
+        }
+
+        .qty-btn:hover { background: #e0e7ff; color: #2563eb; }
+
+        .qty-input {
+            width: 40px;
+            text-align: center;
+            border: none;
+            border-left: 1.5px solid #e5e7eb;
+            border-right: 1.5px solid #e5e7eb;
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #111827;
+            padding: 0.25rem 0;
+            outline: none;
+        }
+
+        /* ── Remove button ── */
+        .btn-remove {
+            width: 34px;
+            height: 34px;
+            border-radius: 50%;
+            background: #fff;
+            border: 1.5px solid #e5e7eb;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.18s;
+            flex-shrink: 0;
+        }
+
+        .btn-remove svg {
+            width: 16px;
+            height: 16px;
+            stroke: #9ca3af;
+            transition: stroke 0.18s;
+        }
+
+        .btn-remove:hover {
+            background: #fef2f2;
+            border-color: #fca5a5;
+        }
+
+        .btn-remove:hover svg { stroke: #ef4444; }
+
+        /* ── Removing animation ── */
+        .cart-item.removing {
+            animation: row-out 0.35s ease forwards;
+        }
+
+        @keyframes row-out {
+            0%   { opacity: 1; transform: translateX(0); }
+            100% { opacity: 0; transform: translateX(40px); }
+        }
+
+        /* ── Summary Box ── */
+        .cart-summary {
+            background: #fff;
+            border-radius: 16px;
+            border: 1px solid #f1f5f9;
+            box-shadow: 0 1px 4px rgba(0,0,0,.06);
+            padding: 1.75rem;
+            position: sticky;
+            top: 100px;
+        }
+
+        .cart-summary h2 {
+            font-size: 1.15rem;
+            font-weight: 700;
+            color: #111827;
+            margin: 0 0 1.25rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid #f1f5f9;
+        }
+
+        .summary-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 0.75rem;
+            font-size: 0.9rem;
+            color: #6b7280;
+        }
+
+        .summary-row.total {
+            font-size: 1.05rem;
+            font-weight: 700;
+            color: #111827;
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid #f1f5f9;
+            margin-bottom: 1.5rem;
+        }
+
+        .summary-row span:last-child { font-weight: 600; color: #111827; }
+        .summary-row.total span:last-child { color: #2563eb; font-size: 1.25rem; }
+
+        .btn-checkout {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            width: 100%;
+            padding: 0.85rem 1rem;
+            background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+            color: #fff;
+            font-size: 1rem;
+            font-weight: 700;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            text-decoration: none;
+            transition: transform 0.15s, box-shadow 0.15s;
+            letter-spacing: .02em;
+        }
+
+        .btn-checkout:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(37,99,235,.35);
+        }
+
+        .btn-continue {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.4rem;
+            width: 100%;
+            padding: 0.75rem 1rem;
+            background: transparent;
+            color: #6b7280;
+            font-size: 0.875rem;
+            font-weight: 500;
+            border: 1.5px solid #e5e7eb;
+            border-radius: 10px;
+            cursor: pointer;
+            text-decoration: none;
+            margin-top: 0.75rem;
+            transition: all 0.18s;
+        }
+
+        .btn-continue:hover {
+            background: #f8fafc;
+            color: #2563eb;
+            border-color: #bfdbfe;
+        }
+
+        /* ── Note box ── */
+        .cart-note {
+            margin-top: 1rem;
+            padding: 0.75rem 1rem;
+            background: #eff6ff;
+            border-radius: 8px;
+            font-size: 0.8rem;
+            color: #3b82f6;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+
+        /* ── Responsive ── */
+        @media (max-width: 640px) {
+            .cart-items-header { display: none; }
+            .cart-item {
+                grid-template-columns: 1fr auto;
+                grid-template-rows: auto auto auto;
+            }
+            .cart-item-product { grid-column: 1 / -1; }
+            .cart-item-variant { display: none; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- Header -->
+<div th:replace="~{client/fragments/header :: header_fragment}"></div>
+
+<!-- Cart Page -->
+<section class="cart-page">
+    <div class="container">
+
+        <!-- Page Header -->
+        <div class="cart-header">
+            <div class="cart-header-left">
+                <h1>Giỏ hàng</h1>
+                <span class="cart-count-badge"
+                      th:text="${cart != null ? #lists.size(cart) : 0}">0</span>
+            </div>
+        </div>
+
+        <!-- Empty State -->
+        <div class="cart-empty" th:if="${cart == null or #lists.isEmpty(cart)}">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                <circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/>
+                <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/>
+            </svg>
+            <h2>Giỏ hàng trống</h2>
+            <p>Bạn chưa có sản phẩm nào trong giỏ. Hãy thêm ngay nhé!</p>
+            <a href="/" class="btn-shop-now">
+                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5">
+                    <path d="M5 12h14M12 5l7 7-7 7"/>
+                </svg>
+                Khám phá sản phẩm
+            </a>
+        </div>
+
+        <!-- Cart Content -->
+        <div class="cart-layout" th:if="${cart != null and not #lists.isEmpty(cart)}">
+
+            <!-- Cart Items -->
+            <div class="cart-items-box">
+                <div class="cart-items-header">
+                    <!-- Chọn tất cả -->
+                    <input type="checkbox" class="cart-cb" id="cb-all" title="Chọn tất cả" checked onchange="toggleAll(this)">
+                    <span>Sản phẩm</span>
+                    <span>Màu / Size</span>
+                    <span>Đơn giá</span>
+                    <span>Số lượng</span>
+                    <span></span>
+                </div>
+
+                <div th:each="item : ${cart}"
+                     th:id="'row-' + ${item.cartId}"
+                     th:data-price="${item.salePrice != null ? item.salePrice : item.basePrice}"
+                     th:data-qty="${item.quantity}"
+                     class="cart-item">
+
+                    <!-- Checkbox chọn sản phẩm -->
+                    <input type="checkbox" class="cart-cb item-cb" checked
+                           th:id="'cb-' + ${item.cartId}"
+                           onchange="onItemCheck(this)">
+
+                    <!-- Product info -->
+                    <div class="cart-item-product">
+                        <!-- Ảnh sản phẩm -->
+                        <img th:if="${item.thumbnailUrl != null}"
+                             th:src="${item.thumbnailUrl}"
+                             th:alt="${item.productName}"
+                             class="cart-item-img" />
+                        <div th:if="${item.thumbnailUrl == null}" class="cart-item-img-placeholder">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                                <rect x="3" y="3" width="18" height="18" rx="4"/><path d="M3 9h18M9 21V9"/>
+                            </svg>
+                        </div>
+                        <div class="cart-item-details">
+                            <h3 th:text="${item.productName}">Tên sản phẩm</h3>
+                            <div class="cart-item-meta">
+                               
+                                
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Màu / Size badge -->
+                    <div class="cart-item-variant">
+                        <div style="display:flex;flex-direction:column;gap:.3rem;">
+                            <span th:if="${item.colorName != null}"
+                                  style="display:inline-flex;align-items:center;gap:.35rem;background:#f0fdf4;color:#166534;font-size:.78rem;font-weight:600;padding:.2rem .6rem;border-radius:6px;">
+                                <span th:if="${item.colorCode != null}"
+                                      th:style="'display:inline-block;width:9px;height:9px;border-radius:50%;background:' + ${item.colorCode}"></span>
+                                <span th:text="${item.colorName}">-</span>
+                            </span>
+                            <span th:if="${item.sizeName != null}"
+                                  style="background:#eff6ff;color:#1d4ed8;font-size:.78rem;font-weight:600;padding:.2rem .6rem;border-radius:6px;"
+                                  th:text="'Size ' + ${item.sizeName}">-</span>
+                        </div>
+                    </div>
+
+                    <!-- Đơn giá -->
+                    <div class="cart-item-price">
+                        <span th:text="${#numbers.formatDecimal(item.salePrice != null ? item.salePrice : item.basePrice, 0, 'COMMA', 0, 'POINT') + 'đ'}">0đ</span>
+                        <span th:if="${item.salePrice != null}"
+                              style="display:block;font-size:.75rem;color:#9ca3af;text-decoration:line-through;"
+                              th:text="${#numbers.formatDecimal(item.basePrice, 0, 'COMMA', 0, 'POINT') + 'đ'}"></span>
+                    </div>
+
+                    <!-- Số lượng -->
+                    <div class="qty-control">
+                        <button class="qty-btn"
+                                th:onclick="'changeQty(' + ${item.cartId} + ', ' + ${item.productId} + ', ' + ${item.variantId} + ', -1, ' + ${item.stockQuantity} + ')'"
+                                title="Giảm">−</button>
+                        <input class="qty-input"
+                               type="number"
+                               min="1"
+                               th:max="${item.stockQuantity}"
+                               th:value="${item.quantity}"
+                               th:id="'qty-' + ${item.cartId}"
+                               th:onchange="'setQty(' + ${item.cartId} + ', ' + ${item.productId} + ', ' + ${item.variantId} + ', this.value, ' + ${item.stockQuantity} + ')'" />
+                        <button class="qty-btn"
+                                th:onclick="'changeQty(' + ${item.cartId} + ', ' + ${item.productId} + ', ' + ${item.variantId} + ', 1, ' + ${item.stockQuantity} + ')'"
+                                title="Tăng">+</button>
+                    </div>
+
+                    <!-- Xóa -->
+                    <button class="btn-remove"
+                            th:onclick="'removeItem(' + ${item.cartId} + ')'"
+                            title="Xóa">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="3 6 5 6 21 6"/>
+                            <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/>
+                            <path d="M10 11v6M14 11v6"/>
+                        </svg>
+                    </button>
+
+                </div>
+            </div>
+
+            <!-- Order Summary -->
+            <div class="cart-summary">
+                <h2>Tóm tắt đơn hàng</h2>
+
+                <div class="summary-row">
+                    <span>Số lượng sản phẩm</span>
+                    <span id="summary-count"
+                          th:text="${#lists.size(cart)} + ' sản phẩm'">0 sản phẩm</span>
+                </div>
+                <div class="summary-row">
+                    <span>Phí vận chuyển</span>
+                    <span style="color:#16a34a;font-weight:600;">Miễn phí</span>
+                </div>
+                <div class="summary-row total">
+                    <span>Tổng cộng</span>
+                    <span id="summary-total">—</span>
+                </div>
+
+                <a href="/checkout" class="btn-checkout">
+                    <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5">
+                        <path d="M5 12h14M12 5l7 7-7 7"/>
+                    </svg>
+                    Tiến hành thanh toán
+                </a>
+
+                <a href="/" class="btn-continue">
+                    <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M19 12H5M12 19l-7-7 7-7"/>
+                    </svg>
+                    Tiếp tục mua sắm
+                </a>
+
+                
+            </div>
+        </div>
+
+    </div>
+</section>
+
+<div th:replace="~{client/fragments/footer :: footer_fragment}"></div>
+
+<script>
+    /* ── Xóa sản phẩm ── */
+    async function removeItem(cartId) {
+        if (!confirm('Bạn có chắc muốn xóa sản phẩm này khỏi giỏ hàng?')) return;
+        try {
+            const res = await fetch('/cart/remove/' + cartId, {
+                method: 'DELETE',
+                headers: { 'Content-Type': 'application/json' }
+            });
+            if (res.ok) {
+                const row = document.getElementById('row-' + cartId);
+                if (row) {
+                    row.classList.add('removing');
+                    row.addEventListener('animationend', () => {
+                        row.remove();
+                        updateSummary();
+                        checkCartEmpty();
+                    });
+                }
+                showToast('Đã xóa sản phẩm khỏi giỏ hàng', 'success');
+            } else {
+                showToast('Xóa thất bại. Vui lòng thử lại.', 'error');
+            }
+        } catch (err) {
+            showToast('Lỗi kết nối', 'error');
+        }
+    }
+
+    /* ── Thay đổi số lượng ── */
+    async function changeQty(cartId, productId, variantId, delta, stockQty) {
+        const input = document.getElementById('qty-' + cartId);
+        if (!input) return;
+        const newVal = (parseInt(input.value, 10) || 1) + delta;
+        if (newVal < 1) { 
+            showToast('Số lượng tối thiểu là 1', 'info'); 
+            return; 
+        }
+        if (newVal > stockQty) {
+            showToast('Chỉ còn ' + stockQty + ' sản phẩm trong kho', 'error');
+            return;
+        }
+        await setQty(cartId, productId, variantId, newVal, stockQty);
+    }
+
+    async function setQty(cartId, productId, variantId, newQty, stockQty) {
+        const qty = parseInt(newQty, 10);
+        const input = document.getElementById('qty-' + cartId);
+        
+        if (isNaN(qty) || qty < 1) { 
+            showToast('Số lượng không hợp lệ', 'error');
+            if (input) input.value = input.defaultValue;
+            return; 
+        }
+        
+        if (qty > stockQty) {
+            showToast('Chỉ còn ' + stockQty + ' sản phẩm trong kho', 'error');
+            if (input) input.value = input.defaultValue;
+            return;
+        }
+        
+        try {
+            const res = await fetch('/cart/update', {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ id: cartId, productId, variantId, quantity: qty })
+            });
+            if (res.ok) {
+                if (input) { input.value = qty; input.defaultValue = qty; }
+                // Cập nhật data-qty để tính lại tổng
+                const row = document.getElementById('row-' + cartId);
+                if (row) row.dataset.qty = qty;
+                updateSummary();
+            } else {
+                const data = await res.json().catch(() => ({}));
+                showToast('Cập nhật thất bại: ' + (data.message || 'Lỗi không xác định'), 'error');
+                if (input) input.value = input.defaultValue;
+            }
+        } catch (err) {
+            showToast('Lỗi kết nối', 'error');
+            if (input) input.value = input.defaultValue;
+        }
+    }
+
+    /* ── Checkbox: chọn / bỏ chọn từng item ── */
+    function onItemCheck(cb) {
+        const row = cb.closest('.cart-item');
+        if (row) row.classList.toggle('unchecked', !cb.checked);
+        syncSelectAll();
+        updateSummary();
+    }
+
+    /* ── Checkbox: chọn tất / bỏ tất ── */
+    function toggleAll(cbAll) {
+        document.querySelectorAll('.item-cb').forEach(cb => {
+            cb.checked = cbAll.checked;
+            const row = cb.closest('.cart-item');
+            if (row) row.classList.toggle('unchecked', !cbAll.checked);
+        });
+        updateSummary();
+    }
+
+    /* ── Đồng bộ trạng thái checkbox "Chọn tất" ── */
+    function syncSelectAll() {
+        const all  = document.querySelectorAll('.item-cb');
+        const checked = document.querySelectorAll('.item-cb:checked');
+        const cbAll = document.getElementById('cb-all');
+        if (!cbAll) return;
+        cbAll.checked = (all.length > 0 && checked.length === all.length);
+        cbAll.indeterminate = (checked.length > 0 && checked.length < all.length);
+    }
+
+    /* ── Tính tổng & cập nhật badge (chỉ tính item được chọn) ── */
+    function updateSummary() {
+        const allRows     = [...document.querySelectorAll('.cart-item:not(.removing)')];
+        const checkedRows = allRows.filter(row => {
+            const cb = row.querySelector('.item-cb');
+            return cb && cb.checked;
+        });
+
+        const selectedCount = checkedRows.length;
+        const total = checkedRows.reduce((sum, row) => {
+            const price = parseFloat(row.dataset.price) || 0;
+            const qty   = parseInt(row.dataset.qty, 10) || 0;
+            return sum + price * qty;
+        }, 0);
+
+        const badge = document.querySelector('.cart-count-badge');
+        const summaryCount = document.getElementById('summary-count');
+        const summaryTotal = document.getElementById('summary-total');
+
+        if (badge) badge.textContent = allRows.length;
+        if (summaryCount) summaryCount.textContent = selectedCount + ' sản phẩm được chọn';
+        if (summaryTotal) summaryTotal.textContent = selectedCount > 0
+            ? total.toLocaleString('vi-VN') + 'đ'
+            : '—';
+    }
+
+    function checkCartEmpty() {
+        if (document.querySelectorAll('.cart-item:not(.removing)').length === 0) {
+            location.reload();
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        updateSummary();
+        syncSelectAll();
+    });
+</script>
+
+</body>
+</html>

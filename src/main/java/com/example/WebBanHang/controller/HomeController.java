@@ -1,19 +1,20 @@
 package com.example.WebBanHang.controller;
 
+import com.example.WebBanHang.service.*;
 import jakarta.servlet.http.HttpSession;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 import com.example.WebBanHang.dto.ProductSummaryDto;
 import com.example.WebBanHang.model.Brand;
@@ -21,17 +22,14 @@ import com.example.WebBanHang.model.Category;
 import com.example.WebBanHang.model.Product;
 import com.example.WebBanHang.model.Sport;
 import com.example.WebBanHang.model.User;
-import com.example.WebBanHang.service.BrandService;
-import com.example.WebBanHang.service.CategoryService;
-import com.example.WebBanHang.service.ProductService;
-import com.example.WebBanHang.service.SportService;
-import com.example.WebBanHang.service.WishListService;
 
 @Controller
 public class HomeController {
     
     @Autowired
-    private CategoryService categoryService; 
+    private CategoryService categoryService;
+    @Autowired
+     private ProductVariantService productVariantService  ;
     
     @Autowired
     private SportService sportService;  
@@ -67,8 +65,6 @@ public class HomeController {
         model.addAttribute("brands", brands); 
         
         Pageable pageable = PageRequest.of(page, size);
-        
-        // Gọi hàm listSummaryPaginated mới nhất chúng ta đã làm
         Page<ProductSummaryDto> summaryPage = productService.listSummaryPaginated(
             currentUser != null ? currentUser.getId() : null, pageable
         );
@@ -86,7 +82,10 @@ public class HomeController {
     @GetMapping("/product/{id}")
     public String showProduct(@PathVariable Integer id, Model model) {
         Product product = productService.getProduct(id);
+
         model.addAttribute("product", product);
+        model.addAttribute("variant", productVariantService.getAllProductVariants(id));
+
         return "client/product";
     } 
     
@@ -143,5 +142,47 @@ public class HomeController {
         model.addAttribute("totalElements",  resultPage.getTotalElements());
             
         return "client/filter";
+    }
+
+
+
+
+    @GetMapping("/api/test/home-data")
+    @ResponseBody // Đảm bảo Spring Boot trả về JSON thay vì tìm kiếm file View (HTML/JSP)
+    public ResponseEntity<Map<String, Object>> testHomeData(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "12") int size,
+            HttpSession session) {
+
+        // Sử dụng Map để gom tất cả dữ liệu lại thành 1 object JSON duy nhất
+        Map<String, Object> responseData = new HashMap<>();
+
+        // 1. Kiểm tra User trong Session
+        User currentUser = (User) session.getAttribute("currentUser");
+        responseData.put("currentUser", currentUser);
+
+        // 2. Kiểm tra dữ liệu danh mục, thể thao, thương hiệu
+        responseData.put("categories", categoryService.getAllCategories());
+        responseData.put("sports", sportService.getAllSports());
+        responseData.put("brands", brandService.getAllBrands());
+
+        // 3. Kiểm tra dữ liệu phân trang sản phẩm
+        Pageable pageable = PageRequest.of(page, size);
+        Page<ProductSummaryDto> summaryPage = productService.listSummaryPaginated(
+                currentUser != null ? currentUser.getId() : null, pageable
+        );
+
+        // Lưu các thông tin phân trang để dễ đối chiếu
+        Map<String, Object> paginationInfo = new HashMap<>();
+        paginationInfo.put("products", summaryPage.getContent());
+        paginationInfo.put("currentPage", page);
+        paginationInfo.put("totalPages", summaryPage.getTotalPages());
+        paginationInfo.put("totalElements", summaryPage.getTotalElements()); // Thêm tổng số item để dễ check
+        paginationInfo.put("isFirst", summaryPage.isFirst());
+        paginationInfo.put("isLast", summaryPage.isLast());
+
+        responseData.put("productPagination", paginationInfo);
+
+        return ResponseEntity.ok(responseData);
     }
 }

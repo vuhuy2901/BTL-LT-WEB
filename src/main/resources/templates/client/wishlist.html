@@ -1,0 +1,673 @@
+<!doctype html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Wishlist - SportZone</title>
+    <link rel="stylesheet" href="/css/client/base.css">
+    <link rel="stylesheet" href="/css/client/header.css">
+    <link rel="stylesheet" href="/css/client/footer.css">
+    <link rel="stylesheet" href="/css/client/toast.css">
+    <style>
+        /* ── Page Layout ── */
+        .wishlist-page {
+            min-height: 70vh;
+            background: #f8fafc;
+            padding: 2.5rem 0 4rem;
+        }
+
+        .container {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 0 1.5rem;
+        }
+
+        /* ── Page Header ── */
+        .wishlist-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .wishlist-header-left {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .wishlist-header h1 {
+            font-size: 1.875rem;
+            font-weight: 700;
+            color: #111827;
+            margin: 0;
+        }
+
+        .wishlist-count-badge {
+            background: #2563eb;
+            color: #fff;
+            font-size: 0.8rem;
+            font-weight: 700;
+            padding: 0.25rem 0.65rem;
+            border-radius: 999px;
+            line-height: 1;
+        }
+
+        .btn-clear-all {
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            background: transparent;
+            border: 1.5px solid #e5e7eb;
+            color: #6b7280;
+            font-size: 0.875rem;
+            font-weight: 500;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-clear-all:hover {
+            border-color: #ef4444;
+            color: #ef4444;
+            background: #fef2f2;
+        }
+
+        /* ── Empty State ── */
+        .wishlist-empty {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 6rem 2rem;
+            text-align: center;
+            background: #fff;
+            border-radius: 16px;
+            border: 2px dashed #e5e7eb;
+        }
+
+        .wishlist-empty svg {
+            width: 72px;
+            height: 72px;
+            color: #d1d5db;
+            margin-bottom: 1.25rem;
+            animation: pulse-heart 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse-heart {
+            0%, 100% { transform: scale(1); opacity: .6; }
+            50% { transform: scale(1.08); opacity: 1; }
+        }
+
+        .wishlist-empty h2 {
+            font-size: 1.375rem;
+            font-weight: 700;
+            color: #374151;
+            margin: 0 0 0.5rem;
+        }
+
+        .wishlist-empty p {
+            font-size: 0.95rem;
+            color: #9ca3af;
+            margin: 0 0 1.75rem;
+        }
+
+        .btn-shop-now {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: #2563eb;
+            color: #fff;
+            font-size: 0.95rem;
+            font-weight: 600;
+            padding: 0.75rem 1.75rem;
+            border-radius: 10px;
+            text-decoration: none;
+            border: none;
+            cursor: pointer;
+            transition: background 0.2s, transform 0.15s;
+        }
+
+        .btn-shop-now:hover {
+            background: #1d4ed8;
+            transform: translateY(-1px);
+        }
+
+        /* ── Products Grid ── */
+        .wishlist-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+            gap: 1.5rem;
+        }
+
+        /* ── Product Card ── */
+        .product-card {
+            background: #fff;
+            border-radius: 14px;
+            overflow: hidden;
+            box-shadow: 0 1px 3px rgba(0,0,0,.07);
+            border: 1px solid #f1f5f9;
+            transition: transform 0.22s, box-shadow 0.22s;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .product-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 32px rgba(0,0,0,.11);
+        }
+
+        /* Image wrapper */
+        .product-image-wrapper {
+            position: relative;
+            aspect-ratio: 1 / 1;
+            overflow: hidden;
+            background: #f1f5f9;
+            cursor: pointer;
+        }
+
+        .product-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.4s ease;
+        }
+
+        .product-card:hover .product-image {
+            transform: scale(1.06);
+        }
+
+        /* Discount badge */
+        .product-badge {
+            position: absolute;
+            top: 0.6rem;
+            left: 0.6rem;
+            background: #ef4444;
+            color: #fff;
+            font-size: 0.72rem;
+            font-weight: 700;
+            padding: 0.2rem 0.55rem;
+            border-radius: 6px;
+            z-index: 2;
+            letter-spacing: .03em;
+        }
+
+        /* Remove button */
+        .product-remove {
+            position: absolute;
+            top: 0.6rem;
+            right: 0.6rem;
+            width: 34px;
+            height: 34px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.92);
+            backdrop-filter: blur(4px);
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 3;
+            transition: background 0.18s, transform 0.18s;
+            box-shadow: 0 2px 8px rgba(0,0,0,.12);
+        }
+
+        .product-remove svg {
+            width: 16px;
+            height: 16px;
+            stroke: #6b7280;
+            transition: stroke 0.18s;
+        }
+
+        .product-remove:hover {
+            background: #fef2f2;
+            transform: scale(1.1);
+        }
+
+        .product-remove:hover svg {
+            stroke: #ef4444;
+        }
+
+        /* Info area */
+        .product-info {
+            padding: 1rem 1.1rem 1.1rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.3rem;
+            flex: 1;
+            cursor: pointer;
+        }
+
+        .product-category {
+            font-size: 0.72rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: .07em;
+            color: #2563eb;
+            margin: 0;
+        }
+
+        .product-name {
+            font-size: 0.97rem;
+            font-weight: 600;
+            color: #111827;
+            margin: 0;
+            line-height: 1.4;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .product-footer {
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            margin-top: auto;
+            padding-top: 0.6rem;
+            flex-wrap: wrap;
+        }
+
+        .product-price {
+            font-size: 1.05rem;
+            font-weight: 700;
+            color: #111827;
+        }
+
+        .original-price {
+            font-size: 0.83rem;
+            color: #9ca3af;
+            text-decoration: line-through;
+        }
+
+        /* ── Add to Cart button ── */
+        .btn-add-cart {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.4rem;
+            width: 100%;
+            padding: 0.6rem 1rem;
+            margin: 0 1.1rem 1.1rem;
+            width: calc(100% - 2.2rem);
+            background: #111827;
+            color: #fff;
+            font-size: 0.85rem;
+            font-weight: 600;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background 0.18s, transform 0.15s;
+            letter-spacing: .02em;
+        }
+
+        .btn-add-cart:hover {
+            background: #2563eb;
+            transform: translateY(-1px);
+        }
+
+        .btn-add-cart svg {
+            width: 15px;
+            height: 15px;
+            stroke: #fff;
+            flex-shrink: 0;
+        }
+
+        /* ── Removing animation ── */
+        .product-card.removing {
+            animation: card-out 0.35s ease forwards;
+        }
+
+        @keyframes card-out {
+            0%   { opacity: 1; transform: scale(1); }
+            100% { opacity: 0; transform: scale(0.88) translateY(8px); }
+        }
+
+        /* ── Responsive ── */
+        @media (max-width: 640px) {
+            .wishlist-header h1 { font-size: 1.375rem; }
+            .wishlist-grid { grid-template-columns: repeat(2, 1fr); gap: 1rem; }
+        }
+
+        @media (max-width: 420px) {
+            .wishlist-grid { grid-template-columns: 1fr; }
+        }
+        .product-remove svg {
+            width: 16px;
+            height: 16px;
+            fill: #e74c3c;
+            stroke: #e74c3c;
+            transition: fill 0.18s, stroke 0.18s;
+        }
+
+        .product-remove:hover svg {
+            fill: #9ca3af;
+            stroke: #9ca3af;
+        }
+    </style>
+</head>
+<body>
+
+<!-- Header -->
+<div th:replace="~{client/fragments/header :: header_fragment}"></div>
+
+<!-- Wishlist Page -->
+<section class="wishlist-page">
+    <div class="container">
+
+        <!-- Page header -->
+        <div class="wishlist-header">
+            <div class="wishlist-header-left">
+                <h1>Danh sách yêu thích</h1>
+                <span class="wishlist-count-badge"
+                      th:text="${wishlistProducts != null ? #lists.size(wishlistProducts) : 0}">0</span>
+            </div>
+
+            <button class="btn-clear-all"
+                    th:if="${wishlistProducts != null and not #lists.isEmpty(wishlistProducts)}"
+                    onclick="clearAllWishlist()">
+                <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2">
+                    <polyline points="3 6 5 6 21 6"/>
+                    <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/>
+                    <path d="M10 11v6M14 11v6"/>
+                </svg>
+                Xóa tất cả
+            </button>
+        </div>
+
+        <!-- Empty State -->
+        <div class="wishlist-empty" th:if="${wishlistProducts == null or #lists.isEmpty(wishlistProducts)}">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+            </svg>
+            <h2>Chưa có sản phẩm yêu thích</h2>
+            <p>Hãy thêm sản phẩm bạn thích vào đây để mua sau nhé!</p>
+            <a href="/" class="btn-shop-now">
+                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5">
+                    <path d="M5 12h14M12 5l7 7-7 7"/>
+                </svg>
+                Khám phá sản phẩm
+            </a>
+        </div>
+
+        <!-- Products Grid -->
+        <div class="wishlist-grid" th:if="${wishlistProducts != null and not #lists.isEmpty(wishlistProducts)}">
+
+            <div class="product-card" th:each="product : ${wishlistProducts}" th:id="'card-' + ${product.id}">
+
+                <!-- Image -->
+                <div class="product-image-wrapper"
+                     th:onclick="|window.location.href='@{/product/{id}(id=${product.id})}'|">
+                    <img
+                            th:src="${product.thumbnailUrl != null ? product.thumbnailUrl : 'https://images.pexels.com/photos/2529148/pexels-photo-2529148.jpeg?auto=compress&cs=tinysrgb&w=800'}"
+                            th:alt="${product.name}"
+                            class="product-image">
+
+                    <!-- Discount badge -->
+                    <span class="product-badge"
+                          th:if="${product.salePrice != null}"
+                          th:text="${'-' + #numbers.formatDecimal((product.basePrice - product.salePrice) * 100.0 / product.basePrice, 1, 0) + '%'}">
+              </span>
+
+                    <!-- Remove (heart broken) button -->
+                    <button class="product-remove"
+                            th:onclick="'event.stopPropagation(); removeFromWishlist(' + ${product.id} + ', this)'"
+                            title="Xóa khỏi wishlist">
+                        <svg viewBox="0 0 24 24" fill="#e74c3c" stroke="#e74c3c" stroke-width="2">
+                            <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+                        </svg>
+                    </button>
+                </div>
+
+                <!-- Info -->
+                <div class="product-info"
+                     th:onclick="|window.location.href='@{/product/{id}(id=${product.id})}'|">
+                    <p class="product-category" th:text="${product.gender != null ? product.gender : 'Unisex'}">Danh mục</p>
+                    <h3 class="product-name" th:text="${product.name}">Tên sản phẩm</h3>
+
+                    <div class="product-footer">
+                <span class="product-price"
+                      th:text="${product.salePrice != null
+                        ? #numbers.formatDecimal(product.salePrice, 0, 'COMMA', 0, 'POINT') + 'đ'
+                        : #numbers.formatDecimal(product.basePrice, 0, 'COMMA', 0, 'POINT') + 'đ'}">0đ</span>
+                        <span class="original-price"
+                              th:if="${product.salePrice != null}"
+                              th:text="${#numbers.formatDecimal(product.basePrice, 0, 'COMMA', 0, 'POINT') + 'đ'}">0đ</span>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+</section>
+
+<div th:replace="~{client/fragments/footer :: footer_fragment}"></div>
+
+<script>
+    /* ── Helpers ── */
+    function getUserId() {
+        try {
+            return JSON.parse(sessionStorage.getItem('currentUser')).id;
+        } catch (e) {
+            return null;
+        }
+    }
+
+    function showToast(message, type = 'info') {
+        let container = document.getElementById('toast-container');
+        if (!container) {
+            container = document.createElement('div');
+            container.id = 'toast-container';
+            document.body.appendChild(container);
+        }
+        const toast = document.createElement('div');
+        toast.className = `toast-msg toast-${type}`;
+        toast.innerText = message;
+        container.appendChild(toast);
+        setTimeout(() => {
+            toast.style.opacity = '0';
+            setTimeout(() => toast.parentNode && toast.parentNode.removeChild(toast), 300);
+        }, 3000);
+    }
+
+
+    async function removeFromWishlist(productId, btnEl) {
+        const userId = getUserId();
+        if (!userId) {
+            showToast('Vui lòng đăng nhập để thao tác', 'error');
+            window.location.href = '/login';
+            return;
+        }
+
+        try {
+            const res = await fetch('/wishlist/remove', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ userId, productId })
+            });
+            const data = await res.json();
+
+            if (data.status === 'SUCCESS') {
+                const card = document.getElementById('card-' + productId);
+                if (card) {
+                    card.classList.add('removing');
+                    card.addEventListener('animationend', () => {
+                        card.remove();
+                        updateCount();
+                        checkEmpty();
+                    });
+                }
+                showToast('Đã xóa khỏi danh sách yêu thích', 'success');
+            } else {
+                showToast('Xóa thất bại: ' + (data.message || 'Lỗi không xác định'), 'error');
+            }
+        } catch (err) {
+            console.error(err);
+            showToast('Lỗi kết nối', 'error');
+        }
+    }
+
+
+    async function clearAllWishlist() {
+        const userId = getUserId();
+        if (!userId) {
+            showToast('Vui lòng đăng nhập để thao tác', 'error');
+            window.location.href = '/login';
+            return;
+        }
+
+        if (!confirm('Bạn có chắc muốn xóa toàn bộ danh sách yêu thích?')) return;
+
+        try {
+            const res = await fetch('/wishlist/clear', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ userId })
+            });
+            const data = await res.json();
+
+            if (data.status === 'SUCCESS') {
+                document.querySelectorAll('.product-card').forEach(card => {
+                    card.classList.add('removing');
+                    card.addEventListener('animationend', () => card.remove());
+                });
+                setTimeout(() => {
+                    updateCount();
+                    checkEmpty();
+                }, 400);
+                showToast('Đã xóa toàn bộ danh sách yêu thích', 'success');
+            } else {
+                showToast('Xóa thất bại: ' + (data.message || 'Lỗi không xác định'), 'error');
+            }
+        } catch (err) {
+            console.error(err);
+            showToast('Lỗi kết nối', 'error');
+        }
+    }
+
+    /* ── Add to cart ── */
+    async function addToCart(productId, btnEl) {
+        const userId = getUserId();
+        if (!userId) {
+            showToast('Vui lòng đăng nhập để thêm vào giỏ hàng', 'error');
+            window.location.href = '/login';
+            return;
+        }
+
+        const original = btnEl.innerHTML;
+        btnEl.disabled = true;
+        btnEl.innerHTML = `
+          <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="20 6 9 17 4 12"/>
+          </svg> Đã thêm!`;
+        btnEl.style.background = '#16a34a';
+
+        try {
+            const res = await fetch('/cart/add', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ userId, productId, quantity: 1 })
+            });
+            const data = await res.json();
+
+            if (data.status === 'SUCCESS') {
+                showToast('Đã thêm vào giỏ hàng', 'success');
+            } else {
+                showToast('Thêm vào giỏ thất bại: ' + (data.message || ''), 'error');
+            }
+        } catch (err) {
+            showToast('Lỗi kết nối', 'error');
+        }
+
+        setTimeout(() => {
+            btnEl.innerHTML = original;
+            btnEl.style.background = '';
+            btnEl.disabled = false;
+        }, 2000);
+    }
+
+    /* ── UI helpers ── */
+    function updateCount() {
+        const remaining = document.querySelectorAll('.product-card').length;
+        const badge = document.querySelector('.wishlist-count-badge');
+        if (badge) badge.textContent = remaining;
+    }
+
+    function checkEmpty() {
+        const grid = document.querySelector('.wishlist-grid');
+        const remaining = document.querySelectorAll('.product-card').length;
+        if (remaining === 0 && grid) {
+            const clearBtn = document.querySelector('.btn-clear-all');
+            if (clearBtn) clearBtn.remove();
+
+            const empty = document.createElement('div');
+            empty.className = 'wishlist-empty';
+            empty.innerHTML = `
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+            </svg>
+            <h2>Chưa có sản phẩm yêu thích</h2>
+            <p>Hãy thêm sản phẩm bạn thích vào đây để mua sau nhé!</p>
+            <a href="/" class="btn-shop-now">
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5">
+                <path d="M5 12h14M12 5l7 7-7 7"/>
+              </svg>
+              Khám phá sản phẩm
+            </a>`;
+            grid.replaceWith(empty);
+        }
+    }
+
+    /* ── Header interactions (same as index) ── */
+    document.addEventListener('DOMContentLoaded', () => {
+        const accountBtn = document.getElementById('account-btn');
+        if (accountBtn) {
+            accountBtn.addEventListener('click', e => {
+                e.stopPropagation();
+                const isLoggedIn = sessionStorage.getItem('currentUser') != null;
+                if (isLoggedIn) {
+                    const menu = document.getElementById('account-dropdown');
+                    if (menu) menu.classList.toggle('active');
+                    else window.location.href = '/login';
+                } else {
+                    window.location.href = '/login';
+                }
+            });
+        }
+
+        document.addEventListener('click', event => {
+            const menu = document.getElementById('account-dropdown');
+            const btn  = document.getElementById('account-btn');
+            if (menu && menu.classList.contains('active') && !menu.contains(event.target) && !btn.contains(event.target)) {
+                menu.classList.remove('active');
+            }
+        });
+
+        const logoutBtn = document.getElementById('logout-btn');
+        if (logoutBtn) {
+            logoutBtn.addEventListener('click', async e => {
+                e.preventDefault();
+                try {
+                    const res  = await fetch('/logout', { method: 'POST', headers: { 'Content-Type': 'application/json' } });
+                    const data = await res.json();
+                    if (data.status === 'SUCCESS') {
+                        sessionStorage.removeItem('currentUser');
+                        window.location.href = '/';
+                    } else {
+                        alert('Đăng xuất thất bại: ' + (data.message || 'Lỗi không xác định'));
+                    }
+                } catch (err) {
+                    alert('Lỗi kết nối khi đăng xuất');
+                }
+            });
+        }
+    });
+</script>
+
+</body>
+</html>

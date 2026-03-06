@@ -15,11 +15,11 @@ import java.time.LocalDateTime;
 @NoArgsConstructor 
 @AllArgsConstructor
 
-
 public class Cart {
     
    @Id   
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "cart_id")
     private Integer id;
     @Column(name = "user_id")
     private Integer userId;

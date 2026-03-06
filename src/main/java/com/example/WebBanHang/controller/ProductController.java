@@ -2,6 +2,8 @@ package com.example.WebBanHang.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -18,7 +20,7 @@ import jakarta.validation.Valid;
 import com.example.WebBanHang.model.Product;
 import com.example.WebBanHang.service.ProductService;
 
-@RestController
+@Controller
 @RequestMapping("product")
 public class ProductController {
 
@@ -56,4 +58,10 @@ public class ProductController {
     public ResponseEntity<ApiResponse> deleteProduct(@PathVariable Integer id) {
         return productService.deleteProduct(id);
     }
+
+
+
+
+
+   
 }

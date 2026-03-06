@@ -3,8 +3,11 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title th:text="${product.name} + ' - SportZone'">SportZone - Premium Sports Equipment</title>
-    <link rel="stylesheet" href="/css/client/index.css">
+    <title th:text="${product != null ? product.name + ' - SportZone' : 'Không tìm thấy sản phẩm - SportZone'}">SportZone</title>
+    <link rel="stylesheet" href="/css/client/base.css">
+    <link rel="stylesheet" href="/css/client/header.css">
+    <link rel="stylesheet" href="/css/client/footer.css">
+    <link rel="stylesheet" href="/css/client/toast.css">
     <style>
       .product-detail-container {
         padding: 4rem 1rem;
@@ -84,23 +87,13 @@
     </style>
   </head>
   <body>
-    <!-- Header (Giữ nguyên như index) -->
-    <header>
-      <div class="container" style="display: flex; align-items: center; justify-content: space-between; padding: 1rem;">
-        <a href="/" class="logo" style="display: flex; align-items: center; gap: 0.5rem; font-size: 1.5rem; font-weight: bold; color: var(--primary-blue); text-decoration: none;">
-          <svg viewBox="0 0 24 24" width="32" height="32" fill="none" stroke="currentColor" stroke-width="2">
-            <polyline points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polyline>
-          </svg>
-          <span>SportZone</span>
-        </a>
-        <a href="/" style="font-weight: bold; color: var(--gray-700); text-decoration: none;">&larr; Quay lại Trang chủ</a>
-      </div>
-    </header>
+    
+    <div th:replace="~{client/fragments/header :: header_fragment}"></div>
 
     <div class="container product-detail-container" th:if="${product != null}">
       <!-- Cột Trái: Ảnh sản phẩm -->
       <div class="product-detail-image">
-        <img th:src="${product.thumbnailUrl != null ? product.thumbnailUrl : 'https://images.pexels.com/photos/2529148/pexels-photo-2529148.jpeg?auto=compress&cs=tinysrgb&w=800'}" th:alt="${product.name}">
+        <img th:src="${product.thumbnailUrl != null ? product.thumbnailUrl : 'https://images.pexels.com/photos/2529148/pexels-photo-2529148.jpeg?auto=compress&amp;cs=tinysrgb&amp;w=800'}" th:alt="${product.name}">
       </div>
 
       <!-- Cột Phải: Thông tin chi tiết -->
@@ -125,7 +118,7 @@
           Mô tả chi tiết sản phẩm sẽ hiển thị ở đây.
         </p>
 
-        <button class="add-to-cart-btn" th:onclick="'alert(\'Đã thêm ' + ${product.name} + ' vào giỏ hàng!\')'">
+        <button class="add-to-cart-btn" th:data-name="${product.name}" onclick="alert('Đã thêm ' + this.dataset.name + ' vào giỏ hàng!')">
           THÊM VÀO GIỎ HÀNG
         </button>
       </div>
@@ -136,49 +129,9 @@
       <a href="/" style="display: inline-block; margin-top: 1rem; color: var(--primary-blue);">Quay lại trang chủ</a>
     </div>
 
-    <!-- Script đếm ngược -->
+   
     <script>
-        function initCountdowns() {
-          const timerElements = document.querySelectorAll('.sale-timer-text');
-          timerElements.forEach(el => {
-            const endTimeRaw = el.getAttribute('data-sale-end');
-            if (!endTimeRaw) return;
-            const countDownDate = new Date(endTimeRaw).getTime();
-  
-            const updateTimer = () => {
-              const now = new Date().getTime();
-              const distance = countDownDate - now;
-  
-              if (distance < 0) {
-                el.innerHTML = "Đã kết thúc Flash Sale";
-                el.closest('.sale-countdown-wrapper').style.opacity = '0.5';
-                return true; 
-              }
-  
-              const days = Math.floor(distance / (1000 * 60 * 60 * 24));
-              const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-              const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-              const seconds = Math.floor((distance % (1000 * 60)) / 1000);
-              
-              let timeString = "";
-              if(days > 0) timeString += `${days} ngày `;
-              timeString += `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
-              
-              el.innerHTML = "Kết thúc sau " + timeString;
-              return false;
-            };
-  
-            if (!updateTimer()) {
-              const interval = setInterval(() => {
-                if (updateTimer()) clearInterval(interval);
-              }, 1000);
-            }
-          });
-        }
-  
-        document.addEventListener('DOMContentLoaded', () => {
-          initCountdowns();
-        });
+        
     </script>
   </body>
 </html>

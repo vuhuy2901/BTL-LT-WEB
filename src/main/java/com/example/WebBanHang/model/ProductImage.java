@@ -34,9 +34,7 @@ public class ProductImage {
     @Column(name = "color_id")
     private Integer colorId;  
     @Column(name = "image_url")
-    private String imageUrl; 
-    @Column(name = "is_primary")
-    private Boolean isPrimary ; 
+    private String imageUrl;  
     @CreatedDate
     @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt; 

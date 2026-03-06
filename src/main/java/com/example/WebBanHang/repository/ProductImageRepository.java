@@ -1,10 +1,13 @@
 package com.example.WebBanHang.repository;
 
+import java.util.Optional;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import com.example.WebBanHang.model.ProductImage;
 
-public interface  ProductImageRepository extends JpaRepository<ProductImage, Integer>  {
-       
-    
+public interface ProductImageRepository extends JpaRepository<ProductImage, Integer> {
+
+   
+    Optional<ProductImage> findFirstByProductIdAndColorId(Integer productId, Integer colorId);
 }

@@ -44,45 +44,53 @@ public class ProductService {
             );
         }
     }
-   
     public ResponseEntity<ApiResponse> listSummary(Integer userId) {
         try {
-            // Lấy danh sách ID đã thích của user (nếu có)
-            List<Integer> wishListProductIds = (userId != null) ? 
-                wishListService.getWishListProductIds(userId) : List.of();
+
+            List<Integer> wishListProductIds = (userId != null) ?
+                    wishListService.getWishListProductIds(userId) : List.of();
 
             List<ProductSummaryDto> summaries = repo.findByIsActiveTrue()
-                .stream()
-                .map(p -> {
-                    Integer discount = null;
-                    if (p.getSalePrice() != null && p.getBasePrice() > 0
-                        && p.getSaleEnd() != null && p.getSaleEnd().isAfter(LocalDateTime.now()) 
-                        && p.getSaleStart() != null && p.getSaleStart().isBefore(LocalDateTime.now())) {
-                        discount = (int) Math.round((p.getBasePrice() - p.getSalePrice()) * 100.0 / p.getBasePrice());
-                    }
-                    Boolean isWished = wishListProductIds.contains(p.getId());
-                    return new ProductSummaryDto(
-                        p.getId(),
-                        p.getName(),
-                        p.getThumbnailUrl(),
-                        p.getBasePrice(),
-                        discount != null ? p.getSalePrice() : null,
-                        p.getGender() != null ? p.getGender().name() : null,
-                        p.getSaleStart(),
-                        p.getSaleEnd(),
-                        discount,
-                        isWished
-                    );
-                })
-                .collect(Collectors.toList());
+                    .stream()
+                    .map(p -> {
+                        Integer discount = null;
+                        if (p.getSalePrice() != null && p.getBasePrice() > 0
+                                && p.getSaleEnd() != null && p.getSaleEnd().isAfter(LocalDateTime.now())
+                                && p.getSaleStart() != null && p.getSaleStart().isBefore(LocalDateTime.now())) {
+                            discount = (int) Math.round((p.getBasePrice() - p.getSalePrice()) * 100.0 / p.getBasePrice());
+                        }
+                        Boolean isWished = wishListProductIds.contains(p.getId());
+                        return new ProductSummaryDto(
+                                p.getId(),
+                                p.getName(),
+                                p.getThumbnailUrl(),
+                                p.getBasePrice(),
+                                discount != null ? p.getSalePrice() : null,
+                                p.getGender() != null ? p.getGender().name() : null,
+                                p.getSaleStart(),
+                                p.getSaleEnd(),
+                                discount,
+                                isWished
+                        );
+                    })
+                    .collect(Collectors.toList());
             return ResponseEntity.ok().body(
-                new ApiResponse<>("SUCCESS", "Lấy danh sách sản phẩm thành công", summaries)
+                    new ApiResponse<>("SUCCESS", "Lấy danh sách sản phẩm thành công", summaries)
             );
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(
-                new ApiResponse<>("ERROR", "Lỗi Server", null)
+                    new ApiResponse<>("ERROR", "Lỗi Server", null)
             );
         }
+    }
+   
+    public List<ProductSummaryDto> listSummary(Integer userId ,List<Product> products) {
+        List<Integer> wishListProductIds = (userId != null) ?
+                wishListService.getWishListProductIds(userId) : List.of();
+
+        return products.stream()
+                .map(p -> mapToDto(p, wishListProductIds))
+                .collect(Collectors.toList());
     }
 
     public Page<ProductSummaryDto> listSummaryPaginated(Integer userId, Pageable pageable) {
@@ -126,7 +134,6 @@ public class ProductService {
         }
     }
 
-    // Lấy chi tiết 1 sản phẩm theo id
     public Product getProduct(Integer id) {
         try {
             return repo.findById(id)

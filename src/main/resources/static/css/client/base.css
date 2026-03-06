@@ -1,0 +1,75 @@
+
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+:root {
+  --primary-blue: #2563eb;
+  --primary-blue-dark: #1d4ed8;
+  --primary-cyan: #06b6d4;
+  --gray-900: #111827;
+  --gray-800: #1f2937;
+  --gray-700: #374151;
+  --gray-600: #4b5563;
+  --gray-500: #6b7280;
+  --gray-400: #9ca3af;
+  --gray-300: #d1d5db;
+  --gray-200: #e5e7eb;
+  --gray-100: #f3f4f6;
+  --gray-50:  #f9fafb;
+  --white:    #ffffff;
+  --red:      #e74c3c;
+  --red-dark: #c0392b;
+  --yellow-400: #facc15;
+  --green-600: #16a34a;
+  --red-50: #fef2f2;
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
+  color: var(--gray-700);
+  background-color: var(--white);
+  line-height: 1.6;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 1rem;
+}
+
+/* Base button styles used globally */
+.btn {
+  padding: .75rem 2rem;
+  border-radius: 9999px;
+  font-weight: 600;
+  font-size: 1rem;
+  border: none;
+  cursor: pointer;
+  transition: all .3s;
+  text-decoration: none;
+  display: inline-block;
+  font-family: inherit;
+}
+.btn-primary {
+  background-color: var(--primary-blue);
+  color: var(--white);
+  box-shadow: 0 10px 25px rgba(37,99,235,.2);
+}
+.btn-primary:hover { background-color: var(--primary-blue-dark); box-shadow: 0 15px 35px rgba(37,99,235,.3); }
+.btn-secondary {
+  background-color: var(--white);
+  color: var(--primary-blue);
+  border: 2px solid var(--primary-blue);
+}
+.btn-secondary:hover { background-color: var(--gray-50); }
+
+.original-price {
+  text-decoration: line-through;
+  color: var(--gray-500);
+  font-size: 0.8rem;
+}
+.product-wishlist.active svg {
+  fill: #e74c3c !important;
+  stroke: #e74c3c !important;
+}

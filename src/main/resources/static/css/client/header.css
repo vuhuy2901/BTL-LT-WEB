@@ -1,0 +1,94 @@
+
+/* ════════════════════════════════════════════════
+   HEADER
+════════════════════════════════════════════════ */
+header {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  background-color: var(--white);
+  box-shadow: 0 1px 3px rgba(0,0,0,.1);
+}
+
+header .container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: .5rem;
+  font-size: 1.5rem;
+  font-weight: bold;
+  background: linear-gradient(to right, var(--primary-blue), var(--primary-cyan));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  text-decoration: none;
+}
+.logo svg { width: 2rem; height: 2rem; color: var(--primary-blue); }
+
+nav { display: none; gap: 2rem; }
+nav a { color: var(--gray-700); text-decoration: none; font-weight: 500; transition: color .3s; }
+nav a:hover { color: var(--primary-blue); }
+
+@media (min-width: 768px) { nav { display: flex; } }
+
+/* nav dropdown */
+.nav-dropdown-wrapper { position: relative; display: inline-block; }
+.nav-dropdown {
+  position: absolute; top: 100%; left: 0;
+  background-color: var(--white);
+  box-shadow: 0 10px 25px rgba(0,0,0,.1);
+  border-radius: .5rem; min-width: 200px;
+  opacity: 0; visibility: hidden; transform: translateY(10px);
+  transition: all .3s ease; z-index: 50; padding: .5rem 0; border: 1px solid var(--gray-200);
+}
+.nav-dropdown-wrapper:hover .nav-dropdown { opacity: 1; visibility: visible; transform: translateY(0); }
+.nav-dropdown a { display: block; padding: .75rem 1.5rem; color: var(--gray-700); text-decoration: none; transition: background-color .2s; }
+.nav-dropdown a:hover { background-color: var(--gray-50); color: var(--primary-blue); }
+
+/* header actions */
+.header-actions { display: flex; align-items: center; gap: 1rem; }
+
+.search-container {
+  display: flex; align-items: center; background-color: var(--gray-50);
+  border: 1px solid var(--gray-200); border-radius: 9999px; padding-left: 1rem; transition: all .3s ease;
+}
+.search-container:focus-within { border-color: var(--primary-blue); box-shadow: 0 0 0 2px rgba(37,99,235,.1); }
+.search-input { border: none; background: transparent; outline: none; font-size: .9rem; width: 140px; color: var(--gray-800); transition: width .3s ease; }
+.search-input:focus { width: 200px; }
+.search-container .icon-btn { background: transparent; }
+
+@media (max-width: 767px) {
+  .search-input { display: none; }
+  .search-container { border: none; background: transparent; padding-left: 0; }
+}
+
+.icon-btn {
+  background: none; border: none; cursor: pointer; padding: .5rem; border-radius: 50%;
+  transition: background-color .3s; display: flex; align-items: center; justify-content: center; position: relative;
+}
+.icon-btn:hover { background-color: var(--gray-100); }
+.icon-btn svg { width: 1.25rem; height: 1.25rem; color: var(--gray-700); }
+
+.cart-badge {
+  position: absolute; top: -.25rem; right: -.25rem; background-color: var(--primary-blue); color: var(--white);
+  font-size: .75rem; border-radius: 50%; width: 1.25rem; height: 1.25rem; display: flex; align-items: center; justify-content: center; font-weight: bold;
+}
+
+/* account dropdown */
+.account-wrapper { position: relative; }
+.account-dropdown {
+  position: absolute; top: calc(100% + 10px); right: 0;
+  background-color: var(--white); border-radius: .5rem; box-shadow: 0 10px 25px rgba(0,0,0,.1); width: 180px;
+  opacity: 0; visibility: hidden; transform: translateY(-10px); transition: all .3s ease; z-index: 50; border: 1px solid var(--gray-200);
+}
+.account-dropdown.active { opacity: 1; visibility: visible; transform: translateY(0); }
+.account-dropdown .dropdown-header { padding: 1rem; border-bottom: 1px solid var(--gray-200); color: var(--gray-800); }
+.account-dropdown a { display: flex; align-items: center; gap: .75rem; padding: .75rem 1rem; color: var(--gray-700); text-decoration: none; transition: background-color .2s; }
+.account-dropdown a:hover { background-color: var(--gray-50); color: var(--primary-blue); }
+.account-dropdown a svg { width: 1.25rem; height: 1.25rem; }
