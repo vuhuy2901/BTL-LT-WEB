@@ -22,4 +22,6 @@ public class ProductSummaryDto {
      private LocalDateTime saleEnd;
     private Integer discountPercentage; 
     private Boolean isWished;
+    private Integer  sold_quantity ; 
+    private Integer average_rating ; 
 }

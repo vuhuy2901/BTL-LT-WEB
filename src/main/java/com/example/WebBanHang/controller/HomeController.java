@@ -16,12 +16,15 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import com.example.WebBanHang.dto.ProductDetailDto;
 import com.example.WebBanHang.dto.ProductSummaryDto;
 import com.example.WebBanHang.model.Brand;
 import com.example.WebBanHang.model.Category;
 import com.example.WebBanHang.model.Product;
 import com.example.WebBanHang.model.Sport;
 import com.example.WebBanHang.model.User;
+import com.example.WebBanHang.repository.ColorRepository;
+import com.example.WebBanHang.repository.SizeRepository;
 
 @Controller
 public class HomeController {
@@ -42,6 +45,12 @@ public class HomeController {
     
     @Autowired
     private WishListService wishListService;
+
+    @Autowired
+    private ColorRepository colorRepository;
+
+    @Autowired
+    private SizeRepository sizeRepository;
     
     // ==========================================
     // TRANG CHỦ
@@ -80,11 +89,19 @@ public class HomeController {
     // CHI TIẾT SẢN PHẨM
     // ==========================================
     @GetMapping("/product/{id}")
-    public String showProduct(@PathVariable Integer id, Model model) {
-        Product product = productService.getProduct(id);
+    public String showProduct(@PathVariable Integer id, HttpSession session, Model model) {
+        User currentUser = (User) session.getAttribute("currentUser");
+        if (currentUser != null) {
+            model.addAttribute("currentUser", currentUser);
+        }
 
-        model.addAttribute("product", product);
+        ProductDetailDto dto =
+                productService.getProductDetail(id, currentUser != null ? currentUser.getId() : null);
+
+        model.addAttribute("product", dto);
         model.addAttribute("variant", productVariantService.getAllProductVariants(id));
+        model.addAttribute("colors", colorRepository.findAll());
+        model.addAttribute("sizes", sizeRepository.findAllByOrderByOrderAsc());
 
         return "client/product";
     } 
@@ -184,5 +201,25 @@ public class HomeController {
         responseData.put("productPagination", paginationInfo);
 
         return ResponseEntity.ok(responseData);
+    }
+    @GetMapping("/api/test/product/{id}")
+@ResponseBody
+public ResponseEntity<Map<String, Object>> testProductData(@PathVariable Integer id, HttpSession session) {
+    Map<String, Object> responseData = new HashMap<>();
+
+ 
+    User currentUser = (User) session.getAttribute("currentUser");
+    responseData.put("currentUser_ID", currentUser != null ? currentUser.getId() : "Chưa đăng nhập");
+
+ 
+    ProductDetailDto dto = productService.getProductDetail(id, currentUser != null ? currentUser.getId() : null);
+    responseData.put("product", dto);
+
+    
+    Object variants = productVariantService.getAllProductVariants(id);
+    responseData.put("variants", variants);
+
+   
+    return ResponseEntity.ok(responseData);
     }
 }

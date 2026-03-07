@@ -14,11 +14,15 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import com.example.WebBanHang.dto.ApiResponse;
+import com.example.WebBanHang.dto.ProductDetailDto;
 import com.example.WebBanHang.dto.ProductDto;
+import com.example.WebBanHang.dto.ProductReviewDto;
 import com.example.WebBanHang.dto.ProductSummaryDto;
 import com.example.WebBanHang.model.Product;
+import com.example.WebBanHang.repository.ProductImageRepository;
 import com.example.WebBanHang.repository.ProductRepository;
-import com.example.WebBanHang.service.WishListService;
+import com.example.WebBanHang.repository.ProductReviewRepository;
+import com.example.WebBanHang.repository.UserRepository;
 
 @Service
 public class ProductService {
@@ -33,6 +37,58 @@ public class ProductService {
     @Autowired
     private WishListService wishListService;
 
+    @Autowired
+    private ProductImageRepository imageRepo;
+
+    @Autowired
+    private ProductReviewRepository reviewRepo;
+
+    @Autowired
+    private UserRepository userRepository;
+ 
+    public ProductDetailDto getProductDetail(Integer productId, Integer userId) {
+        Product p = repo.findById(productId).orElse(null);
+        if (p == null) return null;
+
+        Integer discount = null;
+        if (p.getSalePrice() != null && p.getBasePrice() > 0
+                && p.getSaleEnd() != null && p.getSaleEnd().isAfter(LocalDateTime.now())
+                && p.getSaleStart() != null && p.getSaleStart().isBefore(LocalDateTime.now())) {
+            discount = (int) Math.round((p.getBasePrice() - p.getSalePrice()) * 100.0 / p.getBasePrice());
+        }
+
+        List<Integer> wishedIds = (userId != null) ? wishListService.getWishListProductIds(userId) : List.of();
+        Boolean isWished = wishedIds.contains(p.getId());
+
+        List<ProductReviewDto> reviews = reviewRepo.findAllByProductId(productId).stream()
+                .map(r -> new ProductReviewDto(
+                        r.getId(),
+                        r.getUserId(),
+                        userRepository.findUsernameById(r.getUserId()),
+                        r.getRating(),
+                        r.getComment(),
+                        r.getCreatedAt()
+                ))
+                .collect(Collectors.toList());
+
+        return new ProductDetailDto(
+                p.getId(),
+                p.getName(),
+                p.getDescription(),
+                p.getThumbnailUrl(),
+                p.getBasePrice(),
+                discount != null ? p.getSalePrice() : null,
+                p.getGender() != null ? p.getGender().name() : null,
+                p.getSaleStart(),
+                p.getSaleEnd(),
+                discount,
+                isWished,
+                p.getSoldQuantity(),
+                p.getAverageRating(),
+                imageRepo.findAllByProductId(productId),
+                reviews
+        );
+    }
     public ResponseEntity<ApiResponse> listProduct() {
         try {
             return ResponseEntity.ok().body(
@@ -70,7 +126,9 @@ public class ProductService {
                                 p.getSaleStart(),
                                 p.getSaleEnd(),
                                 discount,
-                                isWished
+                                isWished,
+                                p.getSoldQuantity(),
+                                p.getAverageRating() != null ? p.getAverageRating().intValue() : 0
                         );
                     })
                     .collect(Collectors.toList());
@@ -117,7 +175,9 @@ public class ProductService {
                 p.getSaleStart(),
                 p.getSaleEnd(),
                 discount,
-                isWished
+                isWished,
+                p.getSoldQuantity(),
+                p.getAverageRating() != null ? p.getAverageRating().intValue() : 0
             );
         });
     }
@@ -306,7 +366,9 @@ public class ProductService {
             p.getSaleStart(),
             p.getSaleEnd(),
             discount,
-            isWished
+            isWished,
+            p.getSoldQuantity(),
+            p.getAverageRating() != null ? p.getAverageRating().intValue() : 0
         );
     }
 }
