@@ -51,14 +51,14 @@
     </nav>
 
     <div class="header-actions">
-      <div class="search-container">
-        <input type="text" class="search-input" placeholder="Tìm kiếm sản phẩm...">
-        <button class="icon-btn" title="Search">
+      <form action="/filter" method="GET" class="search-container">
+        <input type="text" name="keyword" class="search-input" placeholder="Tìm kiếm sản phẩm..." th:value="${keyword}">
+        <button type="submit" class="icon-btn" title="Search">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
           </svg>
         </button>
-      </div>
+      </form>
 
       <button class="icon-btn" id="header-wishlist-btn" title="Wishlist">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">

@@ -115,6 +115,7 @@ public class HomeController {
             @RequestParam(required = false) List<Integer> sportId,
             @RequestParam(required = false) List<Integer> brandId,
             @RequestParam(required = false) String sortBy,
+            @RequestParam(required = false) String keyword,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "12") int size,
             @RequestParam(required = false) Long minPrice,
@@ -131,12 +132,12 @@ public class HomeController {
         model.addAttribute("categories", categoryService.getAllCategories());
         model.addAttribute("sports",     sportService.getAllSports());
         model.addAttribute("brands",     brandService.getAllBrands());
-        
-        // Giữ lại trạng thái lọc cũ để Thymeleaf checked vào ô
+       
         model.addAttribute("selectedCategoryIds", categoryId);
         model.addAttribute("selectedSportIds",    sportId);
         model.addAttribute("selectedBrandIds",    brandId);
         model.addAttribute("sortBy",    sortBy);
+        model.addAttribute("keyword",   keyword);
         model.addAttribute("minPrice",  minPrice);
         model.addAttribute("maxPrice",  maxPrice);
 
@@ -149,6 +150,7 @@ public class HomeController {
                 sportId,
                 brandId,
                 sortBy,
+                keyword,
                 minPrice,
                 maxPrice,
                 pageable);

@@ -406,7 +406,7 @@
       const productImages   = /*[[${product.images}]]*/ [];
       const colorsData      = /*[[${colors}]]*/ [];
       const sizesData       = /*[[${sizes}]]*/ [];
-
+      const productId = /*[[${product.id}]]*/ 0;
       // Build lookup maps: id -> name
       const colorMap = {};
       colorsData.forEach(c => { colorMap[c.id] = c.name; });
@@ -582,7 +582,14 @@
       }
 
       /* ── Add to cart ── */
-      function handleAddToCart(btn) {
+      async function handleAddToCart(btn) {
+        let userId = null;
+        try { userId = JSON.parse(sessionStorage.getItem('currentUser')).id; }
+        catch (e) {
+          showToast('Vui lòng đăng nhập để thêm vào giỏ hàng', 'error');
+          setTimeout(() => window.location.href = '/login', 1500);
+          return;
+        }
         if (hasVariants && selectedVariantId === null) {
             showToast('Vui lòng chọn đủ Màu sắc và Kích cỡ', 'error');
             return;
@@ -592,7 +599,18 @@
             return;
         }
         const qty = document.getElementById('product-qty').value;
-        showToast(`Đã thêm ${qty} sản phẩm vào giỏ hàng!`, 'success');
+        const data = { userId, productId,quantity:  qty, variantId: selectedVariantId } ; 
+        console.log(data);
+        const res = await fetch('/cart/add', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data )
+        }); 
+        if (res.ok) {
+            showToast(`Đã thêm ${qty} sản phẩm vào giỏ hàng!`, 'success');
+        } else {
+            showToast('Thêm vào giỏ hàng thất bại', 'error');
+        }
         
       }
 
@@ -667,10 +685,11 @@
         const tick = () => {
           const diff = saleEnd - Date.now();
           if (diff <= 0) { timerEl.textContent = 'Flash Sale đã kết thúc'; return; }
-          const h = Math.floor(diff / 3600000);
+          const d = Math.floor(diff / 86400000);
+          const h = Math.floor((diff % 86400000) / 3600000);
           const m = Math.floor((diff % 3600000) / 60000);
           const s = Math.floor((diff % 60000) / 1000);
-          timerEl.textContent = `⚡ Flash Sale kết thúc sau: ${h}h ${m}m ${s}s`;
+          timerEl.textContent = `⚡ Flash Sale kết thúc sau: ${d}d ${h}h ${m}m ${s}s`;
         };
         tick();
         setInterval(tick, 1000);

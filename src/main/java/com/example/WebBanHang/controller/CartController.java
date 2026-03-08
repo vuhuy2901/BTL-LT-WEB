@@ -58,6 +58,15 @@ public class CartController {
             return ResponseEntity.status(401).body(new ApiResponse<>("ERROR", "Vui lòng đăng nhập", null));
         }
 
+        Integer userId = currentUser.getId();
+        Integer productId = cart.getProductId();
+        Integer variantId = cart.getVariantId();
+        Integer quantity = cart.getQuantity();
+
+        if (productId == null || quantity == null || quantity <= 0) {
+            return ResponseEntity.status(400).body(new ApiResponse<>("ERROR", "Số lượng không hợp lệ", null));
+        }
+
         return cartService.addCart(cart); 
     }
 

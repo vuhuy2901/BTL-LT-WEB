@@ -310,15 +310,21 @@ public class ProductService {
         List<Integer> sportIds,
         List<Integer> brandIds,
         String sortBy,
+        String keyword,
         Long minPrice,
         Long maxPrice,
         Pageable pageable) {
 
     Specification<Product> spec = (root, query, cb) -> cb.conjunction();
 
-    // SỬA Ở ĐÂY: Thay vì get("category").get("id"), chỉ cần get("categoryId")
+  
     if (categoryIds != null && !categoryIds.isEmpty())
         spec = spec.and((root, q, cb) -> root.get("categoryId").in(categoryIds));
+
+    if (keyword != null && !keyword.trim().isEmpty()) {
+        String likePattern = "%" + keyword.trim().toLowerCase() + "%";
+        spec = spec.and((root, q, cb) -> cb.like(cb.lower(root.get("name")), likePattern));
+    }
 
     if (sportIds != null && !sportIds.isEmpty())
         spec = spec.and((root, q, cb) -> root.get("sportId").in(sportIds));

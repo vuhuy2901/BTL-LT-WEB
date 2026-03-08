@@ -106,7 +106,7 @@ public class CartService {
 
     public ResponseEntity<ApiResponse<Object>> addCart(Cart cart) {
         if (cart.getQuantity() <= 0) {
-            return ResponseEntity.status(400).body(new ApiResponse<>("ERROR", "Hết hàng", null));
+            return ResponseEntity.status(400).body(new ApiResponse<>("ERROR", "Số lượng không hợp lệ", null));
         }
         if (cart.getProductId() == null) {
             return ResponseEntity.status(400).body(new ApiResponse<>("ERROR", "Sản phẩm không hợp lệ", null));
@@ -116,6 +116,16 @@ public class CartService {
         }
         if (cart.getQuantity() > productVariantRepository.getStockQuantity(cart.getVariantId())) {
             return ResponseEntity.status(400).body(new ApiResponse<>("ERROR", "Số lượng hàng không đủ để ", null));
+        }
+        Integer userId = cart.getUserId();
+        Integer productId = cart.getProductId();
+        Integer variantId = cart.getVariantId();
+        Integer quantity = cart.getQuantity();
+        Optional<Cart> existingCart = cartRepository.findByUserIdAndProductIdAndVariantId(userId, productId, variantId);
+        if (existingCart.isPresent()) {
+            existingCart.get().setQuantity(existingCart.get().getQuantity() + quantity);
+            cartRepository.save(existingCart.get());
+            return ResponseEntity.status(200).body(new ApiResponse<>("SUCCESS", "Thêm vào giỏ hàng thành công", null));
         }
         
 
